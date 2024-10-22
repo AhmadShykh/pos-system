@@ -20,24 +20,24 @@ const Table = ({
     return text;
   };
 
-  // Determine column headers from the `columns` prop or use an empty array if no columns
+  // Determine column headers from the columns prop or use an empty array if no columns
   const columnHeaders = columns.length > 0 ? columns : [];
 
   return (
     <div
       className={`${
         height ? "h-80" : "min-h-full"
-      } bg-blue-100 max-h-52   overflow-auto scrollbar`}
+      } bg-blue-100 max-h-52 overflow-auto scrollbar`}
     >
       {/* Fixed Header */}
-      <div className="  bg-gray-500 font-semibold text-sm mb-2 text-white text-center uppercase">
+      <div className="bg-gray-500 font-semibold text-sm mb-2 text-white text-center uppercase">
         {name}
       </div>
 
       {/* Scrollable Table */}
       <div className="max-h-52">
         <table className="w-full ">
-          <thead className="">
+          <thead>
             <tr>
               {columnHeaders.map((col, index) => (
                 <th
@@ -56,10 +56,9 @@ const Table = ({
           <tbody>
             {data.length > 0 ? (
               data.map((row, rowIndex) => (
-                <tr key={rowIndex}>
+                <tr key={rowIndex} onClick={() => handleRowClick && handleRowClick(row)}>
                   {columnHeaders.map((col, colIndex) => (
                     <td
-                      
                       key={colIndex}
                       className={`px-2 py-1 font-semibold border-r-2 border-r-gray-300 text-[0.85rem] uppercase whitespace-nowrap ${
                         rowIndex === 0 && col.key === highlightColumn
@@ -67,7 +66,7 @@ const Table = ({
                           : ""
                       }`}
                     >
-                      {truncateText(row[col.key]?.toString() || "")}
+                      {col.render ? col.render(row) : truncateText(row[col.key]?.toString() || "")}
                     </td>
                   ))}
                 </tr>
@@ -80,7 +79,7 @@ const Table = ({
                     className="px-2 py-1 border-r-2 border-r-gray-300 text-[0.85rem] uppercase whitespace-nowrap"
                   >
                     {/* Placeholder text or empty */}
-                    {"__"}
+                    {""}
                   </td>
                 ))}
               </tr>

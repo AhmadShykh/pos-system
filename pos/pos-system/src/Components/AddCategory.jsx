@@ -47,6 +47,12 @@ const AddCategory = () => {
     if (id) setFormData(initalFormData);
   };
 
+  const handleDelete = (brandId) => {
+    // Add your delete logic here
+    console.log("Deleting brand with ID: ${brandId}" + brandId);
+    // Example: Call an API or update the state to remove the brand
+  };
+
   return (
     <div className="min-h-[100vh]">
       <h1 className="text-center relative top-10  text-3xl">Add Category</h1>
@@ -83,6 +89,13 @@ const AddCategory = () => {
             columns={[
               { key: "shortForm", header: "Category Id" },
               { key: "name", header: "Category Name" },
+              {
+                key: "delete",
+                header: "Delete",
+                render: (row) => (
+                  <button type="button" onClick={() => handleDelete(row.shortForm)}>Delete</button>
+                ),
+              },
             ]}
           />
         </div>
