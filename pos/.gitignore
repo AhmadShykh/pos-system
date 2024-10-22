@@ -64,7 +64,7 @@ jspm_packages/
 .parcel-cache
 
 # Electron-related
-dist/
+
 dist-electron/
 out/
 release/
