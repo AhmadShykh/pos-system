@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-size: 14px;
+}
+
+.nav-p {
+  @apply py-3;
+}
+.nah-h {
+  @apply lg:h-4 h-3;
+}
+.nav-ph {
+  @apply h-2 lg:h-3;
+}
