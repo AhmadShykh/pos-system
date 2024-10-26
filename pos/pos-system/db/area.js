@@ -74,4 +74,44 @@ const getAllAreas = async () => {
   }
 };
 
-export { addArea, getAllAreas };
+
+/**
+ * Delete an area by a property inside the object.
+ * @param {string} id - The ID to match against the property inside the area object.
+ * @returns {Promise<void>} Resolves when the area is deleted.
+ */
+const deleteArea = async (id) => {
+  try {
+    const areasRef = ref(database, 'areas'); // Reference to all areas in the database
+    const snapshot = await get(areasRef); // Retrieve all areas
+
+    if (snapshot.exists()) {
+      let areaToDeleteKey = null;
+
+      // Find the key of the area to delete by matching the property with id
+      snapshot.forEach((childSnapshot) => {
+        const area = childSnapshot.val();
+        if (area.name === id) { // Match the inner property `id` with the provided id parameter
+          areaToDeleteKey = childSnapshot.key;
+        }
+      });
+
+      if (areaToDeleteKey) {
+        // Delete the specific area entry by its key
+        const areaRef = ref(database, `areas/${areaToDeleteKey}`);
+        await set(areaRef, null);
+        console.log(`Area with ID ${id} has been deleted.`);
+      } else {
+        console.log(`No area found with ID ${id}.`);
+      }
+    } else {
+      console.log("No areas found.");
+    }
+  } catch (error) {
+    console.error("Failed to delete area:", error);
+    throw new Error("Failed to delete area");
+  }
+};
+
+
+export { addArea, getAllAreas,deleteArea };

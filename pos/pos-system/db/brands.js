@@ -77,3 +77,42 @@ export const getAllBrands = async () => {
     throw new Error("Failed to retrieve brands");
   }
 };
+
+
+/**
+ * Delete a brand by a property inside the object.
+ * @param {string} id - The ID to match against the property inside the brand object.
+ * @returns {Promise<void>} Resolves when the brand is deleted.
+ */
+export const deleteBrand = async (id) => {
+  try {
+    const brandsRef = ref(database, 'brands'); // Reference to all brands in the database
+    const snapshot = await get(brandsRef); // Retrieve all brands
+
+    if (snapshot.exists()) {
+      let brandToDeleteKey = null;
+
+      // Find the key of the brand to delete by matching the property with id
+      snapshot.forEach((childSnapshot) => {
+        const brand = childSnapshot.val();
+        if (brand.name === id) { // Match the inner property `id` with the provided id parameter
+          brandToDeleteKey = childSnapshot.key;
+        }
+      });
+
+      if (brandToDeleteKey) {
+        // Delete the specific brand entry by its key
+        const brandRef = ref(database, `brands/${brandToDeleteKey}`);
+        await set(brandRef, null);
+        console.log(`Brand with ID ${id} has been deleted.`);
+      } else {
+        console.log(`No brand found with ID ${id}.`);
+      }
+    } else {
+      console.log("No brands found.");
+    }
+  } catch (error) {
+    console.error("Failed to delete brand:", error);
+    throw new Error("Failed to delete brand");
+  }
+};
