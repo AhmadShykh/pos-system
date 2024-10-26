@@ -1079,18 +1079,11 @@ export function CashInvoiceForm({
           <button
             type="submit"
             onClick={handleSubmit}
-            className="bg-white px-5 py-1 w-1/2 border border-gray-100"
+            className="bg-white px-5 py-1 w-full border border-gray-100"
           >
             {mode} Invoice
           </button>
 
-          {/* <button
-            type="button"
-            onClick={handleReturnInvoice}
-            className="bg-red-500 text-white px-5 py-1 w-1/2"
-          >
-            Return
-          </button> */}
         </div>
       )}
     </form>
