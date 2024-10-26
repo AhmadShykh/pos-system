@@ -14,6 +14,7 @@ let addBrand;
 let addSubCategory;
 let addCategory;
 
+
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1550,
@@ -477,6 +478,44 @@ function createAddCategoryWindow() {
   });
 }
 
+function createReturnWindow() {
+  // if (invoiceViewer && !invoiceViewer.isDestroyed()) {
+  //   invoiceViewer.focus();
+  //   return;
+  // }
+  invoiceViewer = new BrowserWindow({
+    // parent: mainWindow,
+    modal: true,
+    show: false,
+    // resizable: false,
+    width: 1500,
+    height: 700,
+    minWidth: 1500,
+    minHeight: 700,
+
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      enableRemoteModule: false,
+    },
+  });
+
+  invoiceViewer.loadURL(
+    isDev
+      ? "http://localhost:3000#Return"
+      : `file://${path.join(__dirname, "../dist/index.html#Return")}`
+  );
+
+  invoiceViewer.once("ready-to-show", () => {
+    invoiceViewer.show();
+  });
+
+  invoiceViewer.on("closed", () => {
+    invoiceViewer = null;
+  });
+}
+
+
 app.whenReady().then(() => {
   createMainWindow();
   app.on("activate", function () {
@@ -512,4 +551,8 @@ ipcMain.on("openCustomerMastery", () => {
 
 ipcMain.on("openPurchaseInvoice", () => {
   createPurchaseInvoiceWindow();
+});
+
+ipcMain.on("openReturn", () => {
+  createReturnWindow();
 });

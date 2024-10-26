@@ -21,8 +21,6 @@ import {
 } from "../../db/quotation";
 import CashInvoiceTable from "../Components/CashInvoiceTable";
 import Popup from "../Components/Popup";
-import QuotationTable from "../Components/QoutationTable";
-import { QoutationTable2 } from "../Components/QoutationTable";
 
 /**
  * @typedef {import('../../db/cashInvoice').CashInvoice} CashInvoice
@@ -50,19 +48,34 @@ function formatDate(date) {
  */
 function CashInvoice({ mode, initialInvoice }) {
   // State to track the selected action
-  const [state, setState] = useState("unPaid");
   const [action, setAction] = useState(mode || "none");
   const [selectedInvoice, setSelectedInvoice] = useState(
     initialInvoice || null
   );
   const [showEditField, setEditField] = useState(false);
+
+  /**
+   * @type {[Area[], React.Dispatch<React.SetStateAction<Area[]>>]}
+   */
   const [areas, setAreas] = useState([]);
+  /**
+   * @type {[Customer[], Function]}
+   */
   const [customers, setCustomers] = useState([]);
+
+  /**
+   * @type {[CashInvoice[], Function]}
+   */
   const [invoices, setInvoices] = useState([]);
+
+  /**
+   * @type {[CashInvoice[], Function]}
+   */
   const [quotation, setQuotation] = useState([]);
+  /**
+   * @type {[CashInvoice[], Function]}
+   */
   const [deliveryNote, setDeliveryNote] = useState([]);
-  const [isPaid, setIsPaid] = useState(false); // State for button color change
-  const [showQuotationTable, setShowQuotationTable] = useState(false);
 
   const fetchInvoices = async () => {
     const invoices = await getAllCashInvoices();
@@ -74,6 +87,7 @@ function CashInvoice({ mode, initialInvoice }) {
   };
 
   useEffect(() => {
+    // !Fetch Areas
     const fetchData = async () => {
       const areas = await getAllAreas();
       setAreas(areas);
@@ -87,42 +101,28 @@ function CashInvoice({ mode, initialInvoice }) {
   const handleInvoiceSelect = (invoice) => {
     setSelectedInvoice(invoice);
     setEditField(false);
-    setIsPaid(invoice.status === "paid"); // Check if already paid
   };
 
+  // Function to handle changing actions
   const handleActionChange = (newAction) => {
     setAction(newAction);
     setSelectedInvoice(null);
     setEditField(newAction === "edit");
   };
 
-  // Function to change invoice status from unpaid to paid
-  const handleChangeStatus = async () => {
-    if (
-      selectedInvoice &&
-      (selectedInvoice.type === "Delivery" ||
-        selectedInvoice.type === "delivery")
-    ) {
-      // Simulate changing the status on the frontend
-      setSelectedInvoice((prev) => ({
-        ...prev,
-        status: "paid",
-      }));
-      setIsPaid(true); // Update button state
+  const [isPaid, setIsPaid] = useState(false);
 
-      // Uncomment the following lines when you're ready to implement the backend integration
-      /*
-      try {
-        await updateCashInvoice(selectedInvoice.id, { status: "paid" });
-      } catch (error) {
-        console.error("Error updating invoice status:", error);
-      }
-      */
+  // Function to handle payment status change
+  const handleMarkAsPaid = async (id) => {
+    try {
+      // Update the delivery note with paid status
+      await updateDeliveryNote(id, { ...selectedInvoice, status: 'paid' });
+      setIsPaid(true);
+      alert("Delivery Note marked as paid successfully");
+    } catch (error) {
+      console.error("Error marking delivery as paid:", error);
+      alert("Failed to mark delivery as paid");
     }
-  };
-
-  const toggleQuotationManagement = () => {
-    setShowQuotationTable((prev) => !prev);
   };
 
   return (
@@ -147,18 +147,20 @@ function CashInvoice({ mode, initialInvoice }) {
           >
             Delete
           </button>
-          <button
-            onClick={toggleQuotationManagement}
-            className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
-          >
-            {showQuotationTable
-              ? "Hide Quotation Table"
-              : "Show Quotation Table"}
-          </button>
-        </nav>
 
-        {showQuotationTable && <QuotationTable />}
-        {showQuotationTable && <QoutationTable2 />}
+          {selectedInvoice && 
+           invoiceType === "Delivery" && 
+           !isPaid && 
+           mode === "edit" && (
+            <button
+              onClick={() => handleMarkAsPaid(selectedInvoice.id)}
+              className="bg-green-500 text-white px-5 py-1 active:scale-95 border border-green-600 mt-2 ml-2"
+              disabled={isPaid}
+            >
+              Mark as Paid
+            </button>
+          )}
+        </nav>
 
         {action === "none" && (
           <CashInvoiceForm
@@ -250,24 +252,6 @@ function CashInvoice({ mode, initialInvoice }) {
             cb={fetchInvoices}
           />
         )}
-
-        {/* Render the button for delivery invoices */}
-        {selectedInvoice &&
-          (selectedInvoice.type === "Delivery" ||
-            selectedInvoice.type === "delivery") && (
-            <>
-              {console.log(selectedInvoice.type)}
-              <button
-                onClick={handleChangeStatus}
-                className={`mt-1 text-white px-4 py-2 w-full ${
-                  isPaid ? "bg-gray-500" : "bg-blue-500"
-                }`}
-                disabled={selectedInvoice.status === "paid"}
-              >
-                Mark as Paid
-              </button>
-            </>
-          )}
       </div>
     </div>
   );
@@ -381,20 +365,16 @@ export function CashInvoiceForm({
   customers,
   cb,
 }) {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState({
+    ...initialFormData,
+    status: initialInvoice?.status || 'unpaid'
+  });
   const [invoiceType, setInvoiceType] = useState("Cash");
   const [originalInvoiceType, setOriginalInvoiceType] = useState(
     initialInvoice.invoiceType || null
   );
 
   const [totalDetails, setTotalDetails] = useState(initialTotalDetails);
-
-  // function handleReturnInvoice() {
-  //   // Show an alert message for successful return
-  //   alert("Return successful!");
-  
-  // }
-  
 
   //handling poopup inputs
   const handleAccountNameSelect = (accountName) => {
@@ -552,7 +532,7 @@ export function CashInvoiceForm({
         alert("Quotation Created");
       }
     } else if (mode === "edit") {
-      console.log(invoiceType + " " + originalInvoiceType);
+      console.log(invoiceType +" "+ originalInvoiceType);
       let isUpdated = true;
       if (originalInvoiceType === "Cash" && invoiceType === "Cash") {
         await updateCashInvoice(id, { ...cashInvoice, ...totalDetails });
@@ -596,6 +576,8 @@ export function CashInvoiceForm({
     if (cb) cb();
   };
   const [isModeDelete, setIsModeDelete] = useState(mode === "delete");
+
+
 
   return (
     <form
@@ -1073,25 +1055,27 @@ export function CashInvoiceForm({
           />
         </div>
       </div>
+       {invoiceType === "Delivery" && (
+        <div className="flex items-center mt-4 mb-2">
+          <span className="font-medium mr-2">Payment Status:</span>
+          <span className={`px-2 py-1 rounded-full text-sm ${
+            formData.status === 'paid' 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {formData.status === 'paid' ? 'Paid' : 'Unpaid'}
+          </span>
+        </div>
+      )}
 
       {!(mode === "delete" && !Object.keys(initialInvoice).length === 0) && (
-        <div className="flex space-x-2 mt-2">
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className="bg-white px-5 py-1 w-1/2 border border-gray-100"
-          >
-            {mode} Invoice
-          </button>
-
-          {/* <button
-            type="button"
-            onClick={handleReturnInvoice}
-            className="bg-red-500 text-white px-5 py-1 w-1/2"
-          >
-            Return
-          </button> */}
-        </div>
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className="  bg-white   px-5 py-1 w-full  border border-gray-100 mt-2"
+        >
+          {mode} Invoice{" "}
+        </button>
       )}
     </form>
   );
