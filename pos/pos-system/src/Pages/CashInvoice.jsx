@@ -23,6 +23,7 @@ import CashInvoiceTable from "../Components/CashInvoiceTable";
 import Popup from "../Components/Popup";
 import QuotationTable from "../Components/QoutationTable";
 import { QoutationTable2 } from "../Components/QoutationTable";
+import PaymentFields from "../Components/PaymentFields";
 
 /**
  * @typedef {import('../../db/cashInvoice').CashInvoice} CashInvoice
@@ -318,6 +319,9 @@ const paymentData = [
   {
     name: "Credit Card",
   },
+  {
+    name: "Both",
+  },
 ];
 
 const typeData = [
@@ -388,13 +392,20 @@ export function CashInvoiceForm({
   );
 
   const [totalDetails, setTotalDetails] = useState(initialTotalDetails);
+  const [paymentDetails, setPaymentDetails] = useState({
+    cashAmount: 0,
+    creditAmount: 0,
+  });
 
-  // function handleReturnInvoice() {
-  //   // Show an alert message for successful return
-  //   alert("Return successful!");
-  
-  // }
-  
+  //payments handling
+  const handlePaymentDetailsChange = (details) => {
+    setPaymentDetails(details);
+    setFormData((prevData) => ({
+      ...prevData,
+      cashAmount: details.cashAmount,
+      creditAmount: details.creditAmount,
+    }));
+  };
 
   //handling poopup inputs
   const handleAccountNameSelect = (accountName) => {
@@ -888,7 +899,7 @@ export function CashInvoiceForm({
 
         {/* Payment */}
 
-        <div className="flex relative items-center col-span-1">
+        {/* <div className="flex relative items-center col-span-1">
           <span className="w-[48%] text-right inline-block">Payment:</span>
           <input
             type="text"
@@ -908,7 +919,31 @@ export function CashInvoiceForm({
               columns={[{ key: "name", label: "Mode of Payment" }]}
             />
           )}
+        </div> */}
+
+        {/* Payment */}
+        <div className="flex relative items-center col-span-1">
+          <span className="w-[48%] text-right inline-block">Payment:</span>
+          <input
+            type="text"
+            name="payment"
+            value={formData.payment}
+            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+              mode != "delete" ? "bg-white" : ""
+            }`}
+            disabled
+          />
+          {!isModeDelete && (
+            <Popup
+              items={paymentData}
+              onSelect={handlePaymentChange}
+              style={{ top: "top-1 left-[92%]" }}
+              columns={[{ key: "name", label: "Mode of Payment" }]}
+            />
+          )}
         </div>
+
+        
 
         {/* DelPlace */}
         <div className="flex items-center col-span-1">
@@ -1072,7 +1107,16 @@ export function CashInvoiceForm({
             disabled
           />
         </div>
+        {/* Payment Fields */}
+      <PaymentFields
+          mode={mode}
+          formData={formData}
+          totalDetails={totalDetails}
+          onPaymentChange={handlePaymentDetailsChange}
+        />
       </div>
+
+      
 
       {!(mode === "delete" && !Object.keys(initialInvoice).length === 0) && (
         <div className="flex space-x-2 mt-2">
@@ -1083,7 +1127,6 @@ export function CashInvoiceForm({
           >
             {mode} Invoice
           </button>
-
         </div>
       )}
     </form>
