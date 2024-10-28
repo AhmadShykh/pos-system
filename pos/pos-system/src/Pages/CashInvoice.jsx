@@ -85,10 +85,26 @@ function CashInvoice({ mode, initialInvoice }) {
     fetchData();
   }, []);
 
+  // const handleInvoiceSelect = (invoice) => {
+  //   setSelectedInvoice(invoice);
+  //   setEditField(false);
+  //   setIsPaid(invoice.status === "paid"); // Check if already paid
+  // };
+
   const handleInvoiceSelect = (invoice) => {
-    setSelectedInvoice(invoice);
+    // Normalize the type to lowercase for consistent comparison
+    const normalizedInvoice = {
+      ...invoice,
+      type: invoice.type?.toLowerCase() || null,
+      status: invoice.status?.toLowerCase() || "unpaid",
+    };
+
+    setSelectedInvoice(normalizedInvoice);
     setEditField(false);
-    setIsPaid(invoice.status === "paid"); // Check if already paid
+    setIsPaid(normalizedInvoice.status === "paid");
+
+    // Log for debugging
+    console.log("Selected Invoice:", normalizedInvoice);
   };
 
   const handleActionChange = (newAction) => {
@@ -98,27 +114,62 @@ function CashInvoice({ mode, initialInvoice }) {
   };
 
   // Function to change invoice status from unpaid to paid
-  const handleChangeStatus = async () => {
-    if (
-      selectedInvoice &&
-      (selectedInvoice.type === "Delivery" ||
-        selectedInvoice.type === "delivery")
-    ) {
-      // Simulate changing the status on the frontend
-      setSelectedInvoice((prev) => ({
-        ...prev,
-        status: "paid",
-      }));
-      setIsPaid(true); // Update button state
+  // const handleChangeStatus = async () => {
+  //   console.log(selectedInvoice)
+  //   console.log(selectedInvoice.typetype)
 
-      // Uncomment the following lines when you're ready to implement the backend integration
-      /*
+  //   if (
+  //     selectedInvoice &&
+  //     (selectedInvoice.type === "Delivery" ||
+  //       selectedInvoice.type === "delivery")
+  //   ) {
+  //     // Simulate changing the status on the frontend
+  //     setSelectedInvoice((prev) => ({
+  //       ...prev,
+  //       status: "paid",
+  //     }));
+  //     setIsPaid(true); // Update button state
+
+  //     // Uncomment the following lines when you're ready to implement the backend integration
+  //     /*
+  //     try {
+  //       await updateCashInvoice(selectedInvoice.id, { status: "paid" });
+  //     } catch (error) {
+  //       console.error("Error updating invoice status:", error);
+  //     }
+  //     */
+  //   }
+  // };
+
+  const handleChangeStatus = async () => {
+    if (!selectedInvoice) return;
+
+    const normalizedType = selectedInvoice.invoiceType?.toLowerCase();
+    console.log("Invoice type:", normalizedType);
+
+    if (normalizedType === "delivery") {
       try {
-        await updateCashInvoice(selectedInvoice.id, { status: "paid" });
+        // Update local state
+        setSelectedInvoice((prev) => ({
+          ...prev,
+          status: "paid",
+        }));
+        setIsPaid(true);
+
+        // Update in database
+        await updateDeliveryNote(selectedInvoice.id, {
+          ...selectedInvoice,
+          status: "paid",
+        });
+
+        // Refresh the invoices list
+        await fetchInvoices();
+
+        alert("Invoice marked as paid successfully");
       } catch (error) {
         console.error("Error updating invoice status:", error);
+        alert("Error updating invoice status");
       }
-      */
     }
   };
 
@@ -254,20 +305,16 @@ function CashInvoice({ mode, initialInvoice }) {
 
         {/* Render the button for delivery invoices */}
         {selectedInvoice &&
-          (selectedInvoice.type === "Delivery" ||
-            selectedInvoice.type === "delivery") && (
-            <>
-              {console.log(selectedInvoice.type)}
-              <button
-                onClick={handleChangeStatus}
-                className={`mt-1 text-white px-4 py-2 w-full ${
-                  isPaid ? "bg-gray-500" : "bg-blue-500"
-                }`}
-                disabled={selectedInvoice.status === "paid"}
-              >
-                Mark as Paid
-              </button>
-            </>
+          selectedInvoice.invoiceType?.toLowerCase() === "delivery" && (
+            <button
+              onClick={handleChangeStatus}
+              className={`mt-1 text-white px-4 py-2 w-full ${
+                isPaid ? "bg-gray-500" : "bg-blue-500"
+              }`}
+              disabled={selectedInvoice.status === "paid"}
+            >
+              {isPaid ? "Paid" : "Mark as Paid"}
+            </button>
           )}
       </div>
     </div>
@@ -943,8 +990,6 @@ export function CashInvoiceForm({
           )}
         </div>
 
-        
-
         {/* DelPlace */}
         <div className="flex items-center col-span-1">
           <span className="w-[28%] text-right inline-block">DelPlace:</span>
@@ -1108,15 +1153,13 @@ export function CashInvoiceForm({
           />
         </div>
         {/* Payment Fields */}
-      <PaymentFields
+        <PaymentFields
           mode={mode}
           formData={formData}
           totalDetails={totalDetails}
           onPaymentChange={handlePaymentDetailsChange}
         />
       </div>
-
-      
 
       {!(mode === "delete" && !Object.keys(initialInvoice).length === 0) && (
         <div className="flex space-x-2 mt-2">
