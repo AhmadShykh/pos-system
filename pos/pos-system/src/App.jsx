@@ -13,6 +13,7 @@ import AddArea from "./Components/AddArea";
 import AddBrand from "./Components/AddBrand";
 import AddSubCategory from "./Components/AddSubCategory";
 import AddCategory from "./Components/AddCategory";
+import Return from "./Pages/Return";
 function App() {
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -42,6 +43,7 @@ function App() {
             element={<MachineProductSelector />}
           ></Route>
           <Route path="/InvoiceViewer" element={<InvoiceViewer />}></Route>
+          <Route path="/Return" element={<Return />}></Route>
           <Route path="/PurchaseInvoice" element={<PurchaseInvoice />}></Route>
           <Route path="/CustomerMastery" element={<CustomerMastery />}></Route>
           <Route path="/AddArea" element={<AddArea />}></Route>

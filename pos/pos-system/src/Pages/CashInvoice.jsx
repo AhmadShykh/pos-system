@@ -21,6 +21,9 @@ import {
 } from "../../db/quotation";
 import CashInvoiceTable from "../Components/CashInvoiceTable";
 import Popup from "../Components/Popup";
+import QuotationTable from "../Components/QoutationTable";
+import { QoutationTable2 } from "../Components/QoutationTable";
+import PaymentFields from "../Components/PaymentFields";
 
 /**
  * @typedef {import('../../db/cashInvoice').CashInvoice} CashInvoice
@@ -48,34 +51,19 @@ function formatDate(date) {
  */
 function CashInvoice({ mode, initialInvoice }) {
   // State to track the selected action
+  const [state, setState] = useState("unPaid");
   const [action, setAction] = useState(mode || "none");
   const [selectedInvoice, setSelectedInvoice] = useState(
     initialInvoice || null
   );
   const [showEditField, setEditField] = useState(false);
-
-  /**
-   * @type {[Area[], React.Dispatch<React.SetStateAction<Area[]>>]}
-   */
   const [areas, setAreas] = useState([]);
-  /**
-   * @type {[Customer[], Function]}
-   */
   const [customers, setCustomers] = useState([]);
-
-  /**
-   * @type {[CashInvoice[], Function]}
-   */
   const [invoices, setInvoices] = useState([]);
-
-  /**
-   * @type {[CashInvoice[], Function]}
-   */
   const [quotation, setQuotation] = useState([]);
-  /**
-   * @type {[CashInvoice[], Function]}
-   */
   const [deliveryNote, setDeliveryNote] = useState([]);
+  const [isPaid, setIsPaid] = useState(false); // State for button color change
+  const [showQuotationTable, setShowQuotationTable] = useState(false);
 
   const fetchInvoices = async () => {
     const invoices = await getAllCashInvoices();
@@ -87,7 +75,6 @@ function CashInvoice({ mode, initialInvoice }) {
   };
 
   useEffect(() => {
-    // !Fetch Areas
     const fetchData = async () => {
       const areas = await getAllAreas();
       setAreas(areas);
@@ -101,13 +88,42 @@ function CashInvoice({ mode, initialInvoice }) {
   const handleInvoiceSelect = (invoice) => {
     setSelectedInvoice(invoice);
     setEditField(false);
+    setIsPaid(invoice.status === "paid"); // Check if already paid
   };
 
-  // Function to handle changing actions
   const handleActionChange = (newAction) => {
     setAction(newAction);
     setSelectedInvoice(null);
     setEditField(newAction === "edit");
+  };
+
+  // Function to change invoice status from unpaid to paid
+  const handleChangeStatus = async () => {
+    if (
+      selectedInvoice &&
+      (selectedInvoice.type === "Delivery" ||
+        selectedInvoice.type === "delivery")
+    ) {
+      // Simulate changing the status on the frontend
+      setSelectedInvoice((prev) => ({
+        ...prev,
+        status: "paid",
+      }));
+      setIsPaid(true); // Update button state
+
+      // Uncomment the following lines when you're ready to implement the backend integration
+      /*
+      try {
+        await updateCashInvoice(selectedInvoice.id, { status: "paid" });
+      } catch (error) {
+        console.error("Error updating invoice status:", error);
+      }
+      */
+    }
+  };
+
+  const toggleQuotationManagement = () => {
+    setShowQuotationTable((prev) => !prev);
   };
 
   return (
@@ -132,7 +148,18 @@ function CashInvoice({ mode, initialInvoice }) {
           >
             Delete
           </button>
+          <button
+            onClick={toggleQuotationManagement}
+            className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
+          >
+            {showQuotationTable
+              ? "Hide Quotation Table"
+              : "Show Quotation Table"}
+          </button>
         </nav>
+
+        {showQuotationTable && <QuotationTable />}
+        {showQuotationTable && <QoutationTable2 />}
 
         {action === "none" && (
           <CashInvoiceForm
@@ -224,6 +251,24 @@ function CashInvoice({ mode, initialInvoice }) {
             cb={fetchInvoices}
           />
         )}
+
+        {/* Render the button for delivery invoices */}
+        {selectedInvoice &&
+          (selectedInvoice.type === "Delivery" ||
+            selectedInvoice.type === "delivery") && (
+            <>
+              {console.log(selectedInvoice.type)}
+              <button
+                onClick={handleChangeStatus}
+                className={`mt-1 text-white px-4 py-2 w-full ${
+                  isPaid ? "bg-gray-500" : "bg-blue-500"
+                }`}
+                disabled={selectedInvoice.status === "paid"}
+              >
+                Mark as Paid
+              </button>
+            </>
+          )}
       </div>
     </div>
   );
@@ -273,6 +318,9 @@ const paymentData = [
   },
   {
     name: "Credit Card",
+  },
+  {
+    name: "Both",
   },
 ];
 
@@ -344,6 +392,20 @@ export function CashInvoiceForm({
   );
 
   const [totalDetails, setTotalDetails] = useState(initialTotalDetails);
+  const [paymentDetails, setPaymentDetails] = useState({
+    cashAmount: 0,
+    creditAmount: 0,
+  });
+
+  //payments handling
+  const handlePaymentDetailsChange = (details) => {
+    setPaymentDetails(details);
+    setFormData((prevData) => ({
+      ...prevData,
+      cashAmount: details.cashAmount,
+      creditAmount: details.creditAmount,
+    }));
+  };
 
   //handling poopup inputs
   const handleAccountNameSelect = (accountName) => {
@@ -501,7 +563,7 @@ export function CashInvoiceForm({
         alert("Quotation Created");
       }
     } else if (mode === "edit") {
-      console.log(invoiceType +" "+ originalInvoiceType);
+      console.log(invoiceType + " " + originalInvoiceType);
       let isUpdated = true;
       if (originalInvoiceType === "Cash" && invoiceType === "Cash") {
         await updateCashInvoice(id, { ...cashInvoice, ...totalDetails });
@@ -837,7 +899,7 @@ export function CashInvoiceForm({
 
         {/* Payment */}
 
-        <div className="flex relative items-center col-span-1">
+        {/* <div className="flex relative items-center col-span-1">
           <span className="w-[48%] text-right inline-block">Payment:</span>
           <input
             type="text"
@@ -857,7 +919,31 @@ export function CashInvoiceForm({
               columns={[{ key: "name", label: "Mode of Payment" }]}
             />
           )}
+        </div> */}
+
+        {/* Payment */}
+        <div className="flex relative items-center col-span-1">
+          <span className="w-[48%] text-right inline-block">Payment:</span>
+          <input
+            type="text"
+            name="payment"
+            value={formData.payment}
+            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+              mode != "delete" ? "bg-white" : ""
+            }`}
+            disabled
+          />
+          {!isModeDelete && (
+            <Popup
+              items={paymentData}
+              onSelect={handlePaymentChange}
+              style={{ top: "top-1 left-[92%]" }}
+              columns={[{ key: "name", label: "Mode of Payment" }]}
+            />
+          )}
         </div>
+
+        
 
         {/* DelPlace */}
         <div className="flex items-center col-span-1">
@@ -1021,16 +1107,27 @@ export function CashInvoiceForm({
             disabled
           />
         </div>
+        {/* Payment Fields */}
+      <PaymentFields
+          mode={mode}
+          formData={formData}
+          totalDetails={totalDetails}
+          onPaymentChange={handlePaymentDetailsChange}
+        />
       </div>
 
+      
+
       {!(mode === "delete" && !Object.keys(initialInvoice).length === 0) && (
-        <button
-          type="submit"
-          onClick={handleSubmit}
-          className="  bg-white   px-5 py-1 w-full  border border-gray-100 mt-2"
-        >
-          {mode} Invoice{" "}
-        </button>
+        <div className="flex space-x-2 mt-2">
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className="bg-white px-5 py-1 w-full border border-gray-100"
+          >
+            {mode} Invoice
+          </button>
+        </div>
       )}
     </form>
   );
