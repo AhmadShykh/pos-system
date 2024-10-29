@@ -101,8 +101,8 @@ function CashInvoice({ mode, initialInvoice }) {
   const handleChangeStatus = async () => {
     if (
       selectedInvoice &&
-      (selectedInvoice.type === "Delivery" ||
-        selectedInvoice.type === "delivery")
+      (selectedInvoice.invoiceType  === "Delivery" ||
+        selectedInvoice.invoiceType  === "delivery")
     ) {
       // Simulate changing the status on the frontend
       setSelectedInvoice((prev) => ({
@@ -122,157 +122,164 @@ function CashInvoice({ mode, initialInvoice }) {
     }
   };
 
-  const toggleQuotationManagement = () => {
-    setShowQuotationTable((prev) => !prev);
-  };
+ 
 
+  const toggleQuotationManagement = () => {
+    setShowQuotationTable(prev => !prev);
+  };
   return (
     <div>
       <div className="w-[98%] mx-auto">
         <nav className="flex gap-1">
-          <button
-            onClick={() => handleActionChange("add")}
-            className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
-          >
-            Add
-          </button>
-          <button
-            onClick={() => handleActionChange("edit")}
-            className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleActionChange("delete")}
-            className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
-          >
-            Delete
-          </button>
+          {!showQuotationTable && (
+            <>
+              <button
+                onClick={() => handleActionChange("add")}
+                className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
+              >
+                Add
+              </button>
+              <button
+                onClick={() => handleActionChange("edit")}
+                className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleActionChange("delete")}
+                className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
+              >
+                Delete
+              </button>
+            </>
+          )}
           <button
             onClick={toggleQuotationManagement}
             className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
           >
-            {showQuotationTable
-              ? "Hide Quotation Table"
-              : "Show Quotation Table"}
+            {showQuotationTable ? "Hide Quotation Table" : "Show Quotation Table"}
           </button>
         </nav>
 
-        {showQuotationTable && <QuotationTable />}
-        {showQuotationTable && <QoutationTable2 />}
-
-        {action === "none" && (
-          <CashInvoiceForm
-            mode={"delete"}
-            initialInvoice={{}}
-            areas={areas}
-            customers={customers}
-            cb={fetchInvoices}
-          />
-        )}
-
-        {(action === "edit" || action === "delete") && !selectedInvoice && (
-          <div className="h-[94vh] w-[85%] mx-auto mt-6 flex justify-between">
-            <div className="relative">
-              Select Invoice: <input type="text" />
-              <Popup
-                items={invoices}
-                onSelect={handleInvoiceSelect}
-                style={{ top: "top-[3px] left-[92%]" }}
-                columns={[
-                  { key: "id", label: "Id" },
-                  { key: "accountName", label: "Customer" },
-                  { key: "DocNo", label: "DocNo" },
-                  { key: "date", label: "Date" },
-                  { key: "total", label: "Total" },
-                ]}
-                name={"invoiceList"}
-                all={true}
-              />
-            </div>
-            <div className="relative">
-              Select Quotation: <input type="text" />
-              <Popup
-                items={quotation}
-                onSelect={handleInvoiceSelect}
-                style={{ top: "top-[3px] left-[92%]" }}
-                columns={[
-                  { key: "id", label: "Id" },
-                  { key: "accountName", label: "Customer" },
-                  { key: "DocNo", label: "DocNo" },
-                  { key: "date", label: "Date" },
-                  { key: "total", label: "Total" },
-                ]}
-                name={"invoiceList"}
-                all={true}
-              />
-            </div>
-            <div className="relative">
-              Select Delivery Note: <input type="text" />
-              <Popup
-                items={deliveryNote}
-                onSelect={handleInvoiceSelect}
-                style={{ top: "top-[3px] left-[92%]" }}
-                columns={[
-                  { key: "id", label: "Id" },
-                  { key: "accountName", label: "Customer" },
-                  { key: "DocNo", label: "DocNo" },
-                  { key: "date", label: "Date" },
-                  { key: "total", label: "Total" },
-                ]}
-                name={"invoiceList"}
-                all={true}
-              />
-            </div>
+        {showQuotationTable ? (
+          <div className="mt-4">
+            <QuotationTable />
+            <QoutationTable2 />
           </div>
-        )}
+        ) : (
+          <>
+            {action === "none" && (
+              <CashInvoiceForm
+                mode={"delete"}
+                initialInvoice={{}}
+                areas={areas}
+                customers={customers}
+                cb={fetchInvoices}
+              />
+            )}
 
-        {action === "add" && (
-          <CashInvoiceForm
-            mode={"add"}
-            initialInvoice={{
-              terms: "Cash",
-              branch: 2,
-              LOC: 2,
-              date: formatDate(new Date(Date.now())),
-            }}
-            areas={areas}
-            customers={customers}
-            cb={fetchInvoices}
-          />
-        )}
+            {(action === "edit" || action === "delete") && !selectedInvoice && (
+              <div className="h-[94vh] w-[85%] mx-auto mt-6 flex justify-between">
+                <div className="relative">
+                  Select Invoice: <input type="text" />
+                  <Popup
+                    items={invoices}
+                    onSelect={handleInvoiceSelect}
+                    style={{ top: "top-[3px] left-[92%]" }}
+                    columns={[
+                      { key: "id", label: "Id" },
+                      { key: "accountName", label: "Customer" },
+                      { key: "DocNo", label: "DocNo" },
+                      { key: "date", label: "Date" },
+                      { key: "total", label: "Total" },
+                    ]}
+                    name={"invoiceList"}
+                    all={true}
+                  />
+                </div>
+                <div className="relative">
+                  Select Quotation: <input type="text" />
+                  <Popup
+                    items={quotation}
+                    onSelect={handleInvoiceSelect}
+                    style={{ top: "top-[3px] left-[92%]" }}
+                    columns={[
+                      { key: "id", label: "Id" },
+                      { key: "accountName", label: "Customer" },
+                      { key: "DocNo", label: "DocNo" },
+                      { key: "date", label: "Date" },
+                      { key: "total", label: "Total" },
+                    ]}
+                    name={"invoiceList"}
+                    all={true}
+                  />
+                </div>
+                <div className="relative">
+                  Select Delivery Note: <input type="text" />
+                  <Popup
+                    items={deliveryNote}
+                    onSelect={handleInvoiceSelect}
+                    style={{ top: "top-[3px] left-[92%]" }}
+                    columns={[
+                      { key: "id", label: "Id" },
+                      { key: "accountName", label: "Customer" },
+                      { key: "DocNo", label: "DocNo" },
+                      { key: "date", label: "Date" },
+                      { key: "total", label: "Total" },
+                    ]}
+                    name={"invoiceList"}
+                    all={true}
+                  />
+                </div>
+              </div>
+            )}
 
-        {(action === "edit" || action === "delete") && selectedInvoice && (
-          <CashInvoiceForm
-            mode={action}
-            initialInvoice={selectedInvoice}
-            areas={areas}
-            customers={customers}
-            cb={fetchInvoices}
-          />
-        )}
+            {action === "add" && (
+              <CashInvoiceForm
+                mode={"add"}
+                initialInvoice={{
+                  terms: "Cash",
+                  branch: 2,
+                  LOC: 2,
+                  date: formatDate(new Date(Date.now())),
+                }}
+                areas={areas}
+                customers={customers}
+                cb={fetchInvoices}
+              />
+            )}
 
-        {/* Render the button for delivery invoices */}
-        {selectedInvoice &&
-          (selectedInvoice.type === "Delivery" ||
-            selectedInvoice.type === "delivery") && (
-            <>
-              {console.log(selectedInvoice.type)}
-              <button
-                onClick={handleChangeStatus}
-                className={`mt-1 text-white px-4 py-2 w-full ${
-                  isPaid ? "bg-gray-500" : "bg-blue-500"
-                }`}
-                disabled={selectedInvoice.status === "paid"}
-              >
-                Mark as Paid
-              </button>
-            </>
-          )}
+            {(action === "edit" || action === "delete") && selectedInvoice && (
+              <CashInvoiceForm
+                mode={action}
+                initialInvoice={selectedInvoice}
+                areas={areas}
+                customers={customers}
+                cb={fetchInvoices}
+              />
+            )}
+
+            {selectedInvoice &&
+              (selectedInvoice.invoiceType === "Delivery" ||
+                selectedInvoice.invoiceType  === "delivery") && (
+                <button
+                  onClick={handleChangeStatus}
+                  className={`mt-1 text-white px-4 py-2 w-full ${
+                    isPaid ? "bg-gray-500" : "bg-blue-500"
+                  }`}
+                  disabled={selectedInvoice.status === "paid"}
+                >
+                  Mark as Paid
+                </button>
+              )}
+          </>
+        )}
       </div>
     </div>
   );
 }
+
+
 
 const currencyData = [
   {
@@ -897,29 +904,6 @@ export function CashInvoiceForm({
           />
         </div>
 
-        {/* Payment */}
-
-        {/* <div className="flex relative items-center col-span-1">
-          <span className="w-[48%] text-right inline-block">Payment:</span>
-          <input
-            type="text"
-            name="payment"
-            value={formData.payment}
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode != "delete" ? "bg-white" : ""
-            }`}
-            disabled
-          />
-
-          {!isModeDelete && (
-            <Popup
-              items={paymentData}
-              onSelect={handlePaymentChange}
-              style={{ top: "top-1 left-[92%]" }}
-              columns={[{ key: "name", label: "Mode of Payment" }]}
-            />
-          )}
-        </div> */}
 
         {/* Payment */}
         <div className="flex relative items-center col-span-1">
