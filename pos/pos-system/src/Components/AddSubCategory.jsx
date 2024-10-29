@@ -75,9 +75,9 @@ const AddCategory = () => {
   const handleDelete = async (e,subCategoryName) => {
     e.preventDefault(); // Prevent default form or button behavior
     try {
+      //console.log(subCategoryName);
       await deleteSubCategoryById(subCategoryName); // Call the delete function with the brandId
       await fetchSubCategories(); // Re-fetch data to update state after deletion
-      console.log(`Deleting subcategory with ID: ${subCategoryName}`);
     } catch (error) {
       console.error("Error subcategory brand:", error);
     }

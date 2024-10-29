@@ -95,7 +95,8 @@ export const deleteBrand = async (id) => {
       // Find the key of the brand to delete by matching the property with id
       snapshot.forEach((childSnapshot) => {
         const brand = childSnapshot.val();
-        if (brand.name === id) { // Match the inner property `id` with the provided id parameter
+
+        if (brand.shortForm === id) { // Match the inner property `id` with the provided id parameter
           brandToDeleteKey = childSnapshot.key;
         }
       });

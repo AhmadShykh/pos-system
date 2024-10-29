@@ -179,7 +179,7 @@ const deleteCategoryByName = async (name) => {
 
       snapshot.forEach((childSnapshot) => {
         const category = childSnapshot.val();
-        if (category.name === name) {
+        if (category.shortForm === name) {
           const categoryRef = ref(database, `categories/${childSnapshot.key}`);
           remove(categoryRef); // Delete the category with the matching name
           deleted = true;

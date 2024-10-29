@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import CashInvoiceTable from '../Components/CashInvoiceTable';
+import ProductTable from '../Components/ProductTable';
+import {returnProductsFunc} from '../../db/return.js'
 
 const Return = () => {
   const [action, setAction] = useState('none');
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [invoices, setInvoices] = useState([]);
+  const [products, setProducts] = useState(null);
 
+  
 //   useEffect(() => {
 //     fetchInvoices(); // Fetch initial invoices on load
 //   }, []);
@@ -46,11 +50,15 @@ const Return = () => {
   const handleReturnInvoice = () => {
     if (window.confirm('Are you sure you want to return this invoice?')) {
       alert('Return successful!');
+      returnProductsFunc(products)
       // Backend handling instructions
     }
   };
 
   return (
+    <>
+        <ProductTable />
+
     <div className="w-[98%] mx-auto">
       {/* Navigation buttons for Add and Delete actions */}
       <nav className="flex gap-1">
@@ -72,7 +80,7 @@ const Return = () => {
       <div className="mt-4 h-[80vh] overflow-auto border border-gray-200">
         <CashInvoiceTable
           formData={selectedInvoice}
-          onDataChange={(data) => setSelectedInvoice(data)}
+          onDataChange={(data) => setProducts({ products: data})}
           mode={action}
         />
       </div>
@@ -87,6 +95,8 @@ const Return = () => {
         </button>
       </div>
     </div>
+    </>
+    
   );
 };
 

@@ -91,7 +91,7 @@ const deleteArea = async (id) => {
       // Find the key of the area to delete by matching the property with id
       snapshot.forEach((childSnapshot) => {
         const area = childSnapshot.val();
-        if (area.name === id) { // Match the inner property `id` with the provided id parameter
+        if (area.shortForm === id) { // Match the inner property `id` with the provided id parameter
           areaToDeleteKey = childSnapshot.key;
         }
       });
