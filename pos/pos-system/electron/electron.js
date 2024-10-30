@@ -477,8 +477,6 @@ function createAddCategoryWindow() {
   });
 }
 
-<<<<<<< Updated upstream
-=======
 function createReturnWindow() {
   // if (invoiceViewer && !invoiceViewer.isDestroyed()) {
   //   invoiceViewer.focus();
@@ -545,7 +543,6 @@ ipcMain.on('open-invoice-window', (event, invoiceData) => {
   openInvoiceWindow(invoiceData);
 });
 
->>>>>>> Stashed changes
 app.whenReady().then(() => {
   createMainWindow();
   app.on("activate", function () {

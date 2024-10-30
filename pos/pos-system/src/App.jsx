@@ -13,15 +13,12 @@ import AddArea from "./Components/AddArea";
 import AddBrand from "./Components/AddBrand";
 import AddSubCategory from "./Components/AddSubCategory";
 import AddCategory from "./Components/AddCategory";
-<<<<<<< Updated upstream
-=======
 import Return from "./Pages/Return";
 import ProductList from "./Components/ProductList"; // Import ProductList
 import { ipcRenderer } from "electron"; // Import ipcRenderer correctly
 
 
 
->>>>>>> Stashed changes
 function App() {
 
   const [invoiceData, setInvoiceData] = useState(null);
