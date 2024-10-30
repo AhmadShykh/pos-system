@@ -38,7 +38,7 @@ const ProductList = () => {
   };
 
   return (
-    <div id="invoice-container" className="w-full p-5 font-sans flex flex-col justify-between h-screen">
+    <div id="invoice-container" className="w-full p-5 font-sans flex flex-col justify-between ">
       <div id="product-list">
         {printFormat != "no-header" && (
           <div className="text-center mb-5">
