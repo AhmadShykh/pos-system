@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState  } from "react";
 // import {  } from 'react-router-dom';
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
@@ -14,6 +14,9 @@ import AddBrand from "./Components/AddBrand";
 import AddSubCategory from "./Components/AddSubCategory";
 import AddCategory from "./Components/AddCategory";
 import Return from "./Pages/Return";
+import { ipcRenderer } from "electron"; // Import ipcRenderer correctly
+
+
 function App() {
 
   const [invoiceData, setInvoiceData] = useState(null);
