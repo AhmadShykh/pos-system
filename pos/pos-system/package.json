@@ -19,10 +19,18 @@
     "cross-env": "^7.0.3",
     "dexie": "^4.0.8",
     "firebase": "^10.14.1",
+<<<<<<< HEAD
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "pos-system": "file:",
     "print-js": "^1.6.0",
+=======
+
+    "pos-system": "file:",
+
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
+>>>>>>> d23dc47bcfe8df53fc740decac9b46100a020a11
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.24.1",
