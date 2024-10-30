@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import { getAllAreas } from "../../db/area";
 import {
   addCashInvoice,
@@ -44,6 +45,7 @@ function formatDate(date) {
   return `${day}/${month}/${year}`;
 }
 
+
 /**
  * @type {Object} props
  * @params {string} props.mode
@@ -83,12 +85,32 @@ function CashInvoice({ mode, initialInvoice }) {
     };
     fetchInvoices();
     fetchData();
+
+    
+
+
   }, []);
 
+  // const handleInvoiceSelect = (invoice) => {
+  //   setSelectedInvoice(invoice);
+  //   setEditField(false);
+  //   setIsPaid(invoice.status === "paid"); // Check if already paid
+  // };
+
   const handleInvoiceSelect = (invoice) => {
-    setSelectedInvoice(invoice);
+    // Normalize the type to lowercase for consistent comparison
+    const normalizedInvoice = {
+      ...invoice,
+      type: invoice.type?.toLowerCase() || null,
+      status: invoice.status?.toLowerCase() || "unpaid",
+    };
+
+    setSelectedInvoice(normalizedInvoice);
     setEditField(false);
-    setIsPaid(invoice.status === "paid"); // Check if already paid
+    setIsPaid(normalizedInvoice.status === "paid");
+
+    // Log for debugging
+    console.log("Selected Invoice:", normalizedInvoice);
   };
 
   const handleActionChange = (newAction) => {
@@ -98,27 +120,62 @@ function CashInvoice({ mode, initialInvoice }) {
   };
 
   // Function to change invoice status from unpaid to paid
-  const handleChangeStatus = async () => {
-    if (
-      selectedInvoice &&
-      (selectedInvoice.invoiceType === "Delivery" ||
-        selectedInvoice.invoiceType === "delivery")
-    ) {
-      // Simulate changing the status on the frontend
-      setSelectedInvoice((prev) => ({
-        ...prev,
-        status: "paid",
-      }));
-      setIsPaid(true); // Update button state
+  // const handleChangeStatus = async () => {
+  //   console.log(selectedInvoice)
+  //   console.log(selectedInvoice.typetype)
 
-      // Uncomment the following lines when you're ready to implement the backend integration
-      /*
+  //   if (
+  //     selectedInvoice &&
+  //     (selectedInvoice.type === "Delivery" ||
+  //       selectedInvoice.type === "delivery")
+  //   ) {
+  //     // Simulate changing the status on the frontend
+  //     setSelectedInvoice((prev) => ({
+  //       ...prev,
+  //       status: "paid",
+  //     }));
+  //     setIsPaid(true); // Update button state
+
+  //     // Uncomment the following lines when you're ready to implement the backend integration
+  //     /*
+  //     try {
+  //       await updateCashInvoice(selectedInvoice.id, { status: "paid" });
+  //     } catch (error) {
+  //       console.error("Error updating invoice status:", error);
+  //     }
+  //     */
+  //   }
+  // };
+
+  const handleChangeStatus = async () => {
+    if (!selectedInvoice) return;
+
+    const normalizedType = selectedInvoice.invoiceType?.toLowerCase();
+    console.log("Invoice type:", normalizedType);
+
+    if (normalizedType === "delivery") {
       try {
-        await updateCashInvoice(selectedInvoice.id, { status: "paid" });
+        // Update local state
+        setSelectedInvoice((prev) => ({
+          ...prev,
+          status: "paid",
+        }));
+        setIsPaid(true);
+
+        // Update in database
+        await updateDeliveryNote(selectedInvoice.id, {
+          ...selectedInvoice,
+          status: "paid",
+        });
+
+        // Refresh the invoices list
+        await fetchInvoices();
+
+        alert("Invoice marked as paid successfully");
       } catch (error) {
         console.error("Error updating invoice status:", error);
+        alert("Error updating invoice status");
       }
-      */
     }
   };
 
@@ -127,6 +184,7 @@ function CashInvoice({ mode, initialInvoice }) {
   };
   return (
     <div>
+
       <div className="w-[98%] mx-auto">
         <nav className="flex gap-1">
           {!showQuotationTable && (
@@ -555,8 +613,8 @@ export function CashInvoiceForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { id, ...cashInvoice } = formData;
-    console.log(formData);
     if (mode === "add") {
+      window.electron.ipcRenderer.send('open-invoice-window', { ...cashInvoice, ...totalDetails});
       if (invoiceType === "Cash") {
         await addCashInvoice({ ...cashInvoice, ...totalDetails, invoiceType });
         alert("Cash Invoice Created");
@@ -628,6 +686,7 @@ export function CashInvoiceForm({
       onSubmit={handleSubmit}
       className={`${fullheight ? "min-h-[100vh]  " : "min-h-[92vh]"}`}
     >
+      
       <div className="mx-auto">
         <div className="flex items-center w-[30%] mx-auto">
           <span className="w-[35%] text-right inline-block">Invoice Type:</span>

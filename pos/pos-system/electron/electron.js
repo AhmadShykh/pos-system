@@ -3,6 +3,8 @@ const path = require("path");
 
 const isDev = process.env.NODE_ENV === "development";
 
+
+
 let mainWindow;
 let productMastery;
 let cashInvoice;
@@ -515,6 +517,38 @@ function createReturnWindow() {
   });
 }
 
+
+function openInvoiceWindow(invoiceData) {
+  const win = new BrowserWindow({
+    width: 1500,
+    height: 700,
+    minWidth: 1500,
+    minHeight: 700,
+    resizable: true, // Prevent resizing
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      enableRemoteModule: false,
+    },
+  });
+
+  win.loadURL(
+    isDev
+      ? "http://localhost:3000#Print"
+      : `file://${path.join(__dirname, "../dist/index.html#Print")}`
+  );
+
+  // Send invoice data to the renderer process after it loads
+  win.webContents.once('did-finish-load', () => {
+    console.log(invoiceData);
+    win.webContents.send('load-invoice-data', invoiceData);
+  });
+}
+
+
+ipcMain.on('open-invoice-window', (event, invoiceData) => {
+  openInvoiceWindow( invoiceData);
+});
 
 app.whenReady().then(() => {
   createMainWindow();
