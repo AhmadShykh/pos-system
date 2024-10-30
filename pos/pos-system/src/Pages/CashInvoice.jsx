@@ -101,8 +101,8 @@ function CashInvoice({ mode, initialInvoice }) {
   const handleChangeStatus = async () => {
     if (
       selectedInvoice &&
-      (selectedInvoice.invoiceType  === "Delivery" ||
-        selectedInvoice.invoiceType  === "delivery")
+      (selectedInvoice.invoiceType === "Delivery" ||
+        selectedInvoice.invoiceType === "delivery")
     ) {
       // Simulate changing the status on the frontend
       setSelectedInvoice((prev) => ({
@@ -122,10 +122,8 @@ function CashInvoice({ mode, initialInvoice }) {
     }
   };
 
- 
-
   const toggleQuotationManagement = () => {
-    setShowQuotationTable(prev => !prev);
+    setShowQuotationTable((prev) => !prev);
   };
   return (
     <div>
@@ -157,7 +155,9 @@ function CashInvoice({ mode, initialInvoice }) {
             onClick={toggleQuotationManagement}
             className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
           >
-            {showQuotationTable ? "Hide Quotation Table" : "Show Quotation Table"}
+            {showQuotationTable
+              ? "Hide Quotation Table"
+              : "Show Quotation Table"}
           </button>
         </nav>
 
@@ -261,7 +261,7 @@ function CashInvoice({ mode, initialInvoice }) {
 
             {selectedInvoice &&
               (selectedInvoice.invoiceType === "Delivery" ||
-                selectedInvoice.invoiceType  === "delivery") && (
+                selectedInvoice.invoiceType === "delivery") && (
                 <button
                   onClick={handleChangeStatus}
                   className={`mt-1 text-white px-4 py-2 w-full ${
@@ -278,8 +278,6 @@ function CashInvoice({ mode, initialInvoice }) {
     </div>
   );
 }
-
-
 
 const currencyData = [
   {
@@ -618,6 +616,13 @@ export function CashInvoiceForm({
     return Math.floor(value);
   };
 
+  useEffect(() => {
+    setTotalDetails((prevDetails) => ({
+      ...prevDetails,
+      total: roundDownTotal(totalDetails.total),
+    }));
+  }, [totalDetails.total]);
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -907,7 +912,6 @@ export function CashInvoiceForm({
           />
         </div>
 
-
         {/* Payment */}
         <div className="flex relative items-center col-span-1">
           <span className="w-[48%] text-right inline-block">Payment:</span>
@@ -929,8 +933,6 @@ export function CashInvoiceForm({
             />
           )}
         </div>
-
-        
 
         {/* DelPlace */}
         <div className="flex items-center col-span-1">
@@ -1083,27 +1085,25 @@ export function CashInvoiceForm({
           />
         </div>
         <div className="flex relative items-center col-span-1">
-      <span className="w-[40%] text-right inline-block">Total:</span>
-      {console.log(totalDetails.total)}
-      <input
-        type="number"
-        value={roundDownTotal(totalDetails.total) || 0}
-        className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-          mode !== "delete" ? "bg-white" : ""
-        }`}
-        disabled
-      />
-    </div>
+          <span className="w-[40%] text-right inline-block">Total:</span>
+          {console.log(totalDetails.total)}
+          <input
+            type="number"
+            value={roundDownTotal(totalDetails.total) || 0}
+            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+              mode !== "delete" ? "bg-white" : ""
+            }`}
+            disabled
+          />
+        </div>
         {/* Payment Fields */}
-      <PaymentFields
+        <PaymentFields
           mode={mode}
           formData={formData}
           totalDetails={totalDetails}
           onPaymentChange={handlePaymentDetailsChange}
         />
       </div>
-
-      
 
       {!(mode === "delete" && !Object.keys(initialInvoice).length === 0) && (
         <div className="flex space-x-2 mt-2">

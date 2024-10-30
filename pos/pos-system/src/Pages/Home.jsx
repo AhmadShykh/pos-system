@@ -18,6 +18,8 @@ const Home = () => {
    * @type {[Product, React.Dispatch<React.SetStateAction<Product>>]}
    */
   const [selectedProduct, setSelectedProduct] = useState({
+    salesPersonID: 0.0,
+    salesPerson: "",
     productNo: "",
     name: "",
     supplierName: "",
@@ -96,64 +98,75 @@ const Home = () => {
 
       {/* 1st row */}
       <div className="border-b border-t border-b-gray-300 border-t-gray-300">
-        <div className="xl:w-[100%] w-[100%] m-auto flex flex-wrap items-center justify-center gap-3">
-          {/* Fields */}
-          <div className="w-[50%] flex gap-10 items-center">
-            {/* Branch */}
-            <div className="w-[20%] flex items-center">
-              <label htmlFor="Branch" className="text-sm font-semibold">
-                Branch:{" "}
-              </label>
-              <input
-                type="text"
-                id="Branch"
-                className="outline-none border border-gray-700 w-[99%] text-center ml-2 bg-white font-semibold"
-                value={2}
-                disabled
-              />
-            </div>
+  <div className="xl:w-[100%] w-[100%] m-auto flex items-center justify-between gap-4 flex-nowrap">
+    
+    {/* Branch */}
+    <div className="w-[15%] flex items-center">
+      <label htmlFor="Branch" className="text-sm font-semibold">
+        Branch:{" "}
+      </label>
+      <input
+        type="text"
+        id="Branch"
+        className="outline-none border border-gray-700 w-[60%] text-center ml-2 bg-white font-semibold"
+        value={2}
+        disabled
+      />
+    </div>
 
-            {/* Name */}
-            <div className="flex items-center w-[80%]">
-              <label htmlFor="Name" className="text-sm font-semibold">
-                Name:{" "}
-              </label>
-              <input
-                type="text"
-                id="Name"
-                className="outline-none border w-[90%] border-gray-700 ml-2 bg-white px-2 font-semibold"
-                value={selectedProduct.name}
-                disabled
-              />
-            </div>
-          </div>
+    {/* Name */}
+    <div className="w-[20%] flex items-center">
+      <label htmlFor="Name" className="text-sm font-semibold">
+        Name:{" "}
+      </label>
+      <input
+        type="text"
+        id="Name"
+        className="outline-none border border-gray-700 w-[70%] ml-2 bg-white px-2 font-semibold"
+        value={selectedProduct.name}
+        disabled
+      />
+    </div>
 
-          {/* Links */}
-          <div className="flex gap-4 items-center">
-            <a href="/" className="text-blue-500 underline text-xs">
-              edit
-            </a>
-            <a href="/" className="text-blue-500 underline text-xs">
-              Product transactions
-            </a>
-            <a href="/" className="text-blue-500 underline text-xs">
-              Transaction Search
-            </a>
-            <a href="/" className="text-blue-500 underline text-xs">
-              Product Search
-            </a>
-            <a href="/" className="text-blue-500 underline text-xs">
-              Duplicate
-            </a>
-          </div>
+    {/* Salesperson Name */}
+    <div className="w-[25%] flex items-center">
+      <label htmlFor="SalesPersonName" className="text-sm font-semibold">
+        Salesperson Name:{" "}
+      </label>
+      <input
+        type="text"
+        id="SalesPersonName"
+        className="outline-none border border-gray-700 w-[60%] ml-2 bg-white px-2 font-semibold"
+        value={selectedProduct.salesPerson}
+        disabled
+      />
+    </div>
 
-          {/* Add delete Picture */}
-          {/* <div className="flex gap-2 items-center h-full">
-            <button className="bg-white w-40 border-gray-50">Add Pict</button>
-            <button className="bg-white w-40 border-gray-50">Del Pict</button>
-          </div> */}
-        </div>
-      </div>
+    {/* Salesperson ID */}
+    <div className="w-[20%] flex items-center">
+      <label htmlFor="SalesPersonID" className="text-sm font-semibold">
+        Salesperson ID:{" "}
+      </label>
+      <input
+        type="text"
+        id="SalesPersonID"
+        className="outline-none border border-gray-700 w-[70%] ml-2 bg-white px-2 font-semibold"
+        value={selectedProduct.salesPersonID}
+        disabled
+      />
+    </div>
+
+    {/* Links */}
+    <div className="flex gap-4 items-center">
+      <a href="/" className="text-blue-500 underline text-xs">edit</a>
+      <a href="/" className="text-blue-500 underline text-xs">Product transactions</a>
+      <a href="/" className="text-blue-500 underline text-xs">Transaction Search</a>
+      <a href="/" className="text-blue-500 underline text-xs">Product Search</a>
+      <a href="/" className="text-blue-500 underline text-xs">Duplicate</a>
+    </div>
+  </div>
+</div>
+
 
       {/* Product Details */}
       <div className="flex mt-5">

@@ -19,22 +19,10 @@
     "cross-env": "^7.0.3",
     "dexie": "^4.0.8",
     "firebase": "^10.14.1",
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "pos-system": "file:",
-=======
-    "jspdf": "^2.5.2",
-    "jspdf-autotable": "^3.8.4",
->>>>>>> 37b21644b5a00738dfa9e9623255d9c4f8280f51
-=======
-    "jspdf": "^2.5.2",
-    "jspdf-autotable": "^3.8.4",
->>>>>>> 37b21644b5a00738dfa9e9623255d9c4f8280f51
-=======
-    "jspdf": "^2.5.2",
-    "jspdf-autotable": "^3.8.4",
->>>>>>> 37b21644b5a00738dfa9e9623255d9c4f8280f51
+    "print-js": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.24.1",
@@ -69,8 +57,8 @@
       "icon": "assets/icon.ico"
     },
     "files": [
-      "dist/**/*",
-      "electron/**/*"
+      "dist//*",
+      "electron//*"
     ],
     "directories": {
       "buildResources": "assets",
