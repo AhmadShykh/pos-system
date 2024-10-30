@@ -4,6 +4,8 @@ import { printProductList } from "../../db/print.js"; // Adjust the path as nece
 
 const ProductList = () => {
   const [invoice, setInvoice] = useState(null);
+  const [printFormat, setPrintFormat] = useState("default"); // State for selected print format
+
 
   useEffect(() => {
     const loadInvoiceDataListener = (data) => {
@@ -38,7 +40,8 @@ const ProductList = () => {
   return (
     <div id="invoice-container" className="w-full p-5 font-sans flex flex-col justify-between h-screen">
       <div id="product-list">
-        <div className="text-center mb-5">
+        {printFormat != "no-header" && (
+          <div className="text-center mb-5">
           <img
             src="../public/shop-logo.jpg"
             alt="Shop Logo"
@@ -46,6 +49,8 @@ const ProductList = () => {
           />
         </div>
 
+        )}
+        
         {/* Hardcoded Customer and Document Details with alternating alignment */}
         <div className="mb-5">
           <table className="w-full border-collapse">
@@ -112,7 +117,9 @@ const ProductList = () => {
           <thead>
             <tr className="border-b-2">
               <th className="text-left p-2">Sr.No</th>
+
               <th className="text-left p-2">Product Code</th>
+              {printFormat == "part-number" && (<th className="text-left p-2">Part Number</th>)}
               <th className="text-left p-2">Description</th>
               <th className="text-center p-2">Qty</th>
               <th className="text-right p-2">Unit Price</th>
@@ -126,21 +133,23 @@ const ProductList = () => {
             {invoice.products.map((product, index) => (
               <tr key={index} className="border-b">
                 <td className="p-2">{index + 1}</td>
-                <td className="p-2">{product.code}</td>
+                <td className="p-2">{product.productCode}</td>
+                {printFormat == "part-number" && (<td className="p-2">{product.hsCode}</td>)}
+                
                 <td className="p-2">{product.description}</td>
                 <td className="text-center p-2">{product.quantity}</td>
                 <td className="text-right p-2">
-                  AED {product.unitPrice.toFixed(2)}
+                  AED {formatCurrency(product.unitPrice)}
                 </td>
                 <td className="text-right p-2">
-                  AED {(product.unitPrice * product.quantity).toFixed(2)}
+                  AED {(formatCurrency(product.unitPrice) * parseInt(product.quantity, 10)).toFixed(2)}
                 </td>
                 <td className="text-right p-2">{product.vatPercent}%</td>
                 <td className="text-right p-2">
                   AED
                   {(
-                    product.unitPrice *
-                    product.quantity *
+                    formatCurrency(product.unitPrice) *
+                    parseInt(product.quantity, 10) *
                     (product.vatPercent / 100)
                   ).toFixed(2)}
                 </td>
@@ -149,7 +158,7 @@ const ProductList = () => {
                   {(
                     product.unitPrice *
                     product.quantity *
-                    (1 + product.vatPercent / 100)
+                    (1 + invoice.vatAmount / 100)
                   ).toFixed(2)}
                 </td>
               </tr>
@@ -160,13 +169,13 @@ const ProductList = () => {
         {/* Total Amount Section */}
         <div className="text-right mt-5">
           <p>
-            <strong>Sub Total before VAT:</strong> AED {formatCurrency(invoice.subTotal)}
+            <strong>Sub Total before VAT:</strong> AED {formatCurrency(invoice.grossTotal)}
           </p>
           <p>
             <strong>Discount:</strong> AED {formatCurrency(invoice.discount)}
           </p>
           <p>
-            <strong>Total before VAT:</strong> AED {formatCurrency(invoice.totalBeforeVAT)}
+            <strong>Total before VAT:</strong> AED {formatCurrency(invoice.netTotal)}
           </p>
           <p>
             <strong>VAT Amount:</strong> AED {formatCurrency(invoice.vatAmount)}
@@ -177,12 +186,24 @@ const ProductList = () => {
         </div>
       </div>
 
-      <button
-        onClick={handlePrint}
-        className="mt-5 bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Print Invoice
-      </button>
+      <div className="flex items-center mt-5">
+        <select 
+          value={printFormat} 
+          onChange={(e) => setPrintFormat(e.target.value)} 
+          className="mr-2 border rounded p-2"
+        >
+          <option value="default">Print with Header and Product Code</option>
+          <option value="part-number">Print with Part Number</option>
+          <option value="no-header">Print without Header (A4 Size)</option>
+          <option value="header-part-number">Print with Header and Part Number (A4 Size)</option>
+        </select>
+        <button
+          onClick={handlePrint}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Print Invoice
+        </button>
+      </div>
     </div>
   );
 };

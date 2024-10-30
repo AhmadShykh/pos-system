@@ -520,8 +520,10 @@ function createReturnWindow() {
 
 function openInvoiceWindow(invoiceData) {
   const win = new BrowserWindow({
-    width: 595,    // A4 width in pixels
-    height: 842,   // A4 height in pixels
+    width: 1500,
+    height: 700,
+    minWidth: 1500,
+    minHeight: 700,
     resizable: true, // Prevent resizing
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
