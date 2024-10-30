@@ -12,6 +12,7 @@ import AddBrand from "./Components/AddBrand";
 import AddSubCategory from "./Components/AddSubCategory";
 import AddCategory from "./Components/AddCategory";
 import Return from "./Pages/Return";
+import ProductList  from "./Components/ProductList";
 
 function App() {
   const [invoiceData, setInvoiceData] = useState(null);
@@ -27,17 +28,12 @@ function App() {
 
     window.addEventListener("keydown", handleKeyDown);
 
-    // Listen for the 'load-invoice-data' event from Electron's main process
-    const loadInvoiceDataListener = (event, data) => {
-      setInvoiceData(data); // Set invoice data when received
-    };
+    
 
-    window.electron.ipcRenderer.on('load-invoice-data', loadInvoiceDataListener);
-
+    
     // Cleanup function to remove listeners
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      window.electron.ipcRenderer.removeListener('load-invoice-data', loadInvoiceDataListener);
     };
   }, []);
 
@@ -58,13 +54,10 @@ function App() {
           <Route path="/AddSubCategory" element={<AddSubCategory />} />
           <Route path="/AddCategory" element={<AddCategory />} />
           <Route path="/PrintReport" element={<AddCategory />} />
+          <Route path="/Print" element={<ProductList />}/>
           <Route path="*" element={<Home />} /> {/* Catch-all route */}
         </Routes>
-        {invoiceData ? (
-          <ProductList invoiceData={invoiceData} />
-        ) : (
-          <p>Loading...</p>
-        )}
+        
       </div>
     </Router>
   );

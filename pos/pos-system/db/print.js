@@ -1,9 +1,10 @@
 import printJS from 'print-js';
 
-export const printProductList = () => {
+export const printProductList = (invoiceHtml) => {
   printJS({
-    printable: 'product-list', // The id of the element you want to print
+    printable: invoiceHtml, // The id of the element you want to print
     type: 'html',
-    style: '.product-list { font-size: 14px; }' // Optional CSS styling for the print
+    targetStyles: ["*"], // Or specific styles you want to apply
+    style: `@import url("../src/index.css");`, // Include CSS file
   });
 };

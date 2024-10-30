@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ProductList from '../Components/ProductList.jsx';
 
 import { getAllAreas } from "../../db/area";
 import {
@@ -86,6 +85,10 @@ function CashInvoice({ mode, initialInvoice }) {
     };
     fetchInvoices();
     fetchData();
+
+    
+
+
   }, []);
 
   // const handleInvoiceSelect = (invoice) => {
@@ -182,7 +185,6 @@ function CashInvoice({ mode, initialInvoice }) {
 
   return (
     <div>
-          <ProductList cashInvoice ={formData}/>
 
       <div className="w-[98%] mx-auto">
         <nav className="flex gap-1">
@@ -602,9 +604,8 @@ export function CashInvoiceForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { id, ...cashInvoice } = formData;
-    console.log(formData);
     if (mode === "add") {
-      ipcRenderer.send('open-invoice-window', formData);
+      window.electron.ipcRenderer.send('open-invoice-window', { ...cashInvoice, ...totalDetails});
       if (invoiceType === "Cash") {
         await addCashInvoice({ ...cashInvoice, ...totalDetails, invoiceType });
         alert("Cash Invoice Created");

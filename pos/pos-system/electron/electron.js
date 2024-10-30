@@ -520,8 +520,9 @@ function createReturnWindow() {
 
 function openInvoiceWindow(invoiceData) {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 595,    // A4 width in pixels
+    height: 842,   // A4 height in pixels
+    resizable: true, // Prevent resizing
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -537,13 +538,14 @@ function openInvoiceWindow(invoiceData) {
 
   // Send invoice data to the renderer process after it loads
   win.webContents.once('did-finish-load', () => {
+    console.log(invoiceData);
     win.webContents.send('load-invoice-data', invoiceData);
   });
 }
 
 
 ipcMain.on('open-invoice-window', (event, invoiceData) => {
-  openInvoiceWindow(invoiceData);
+  openInvoiceWindow( invoiceData);
 });
 
 app.whenReady().then(() => {

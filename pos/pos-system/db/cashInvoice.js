@@ -92,7 +92,6 @@ const addCashInvoice = async (cashInvoice) => {
 
     cashInvoice.discount = isNaN(cashInvoice.discount) ? 0 : cashInvoice.discount;
 
-    console.log(cashInvoice);
 
     // Generate a new ID using push for Firebase
     const newInvoiceRef = push(ref(db, 'cashInvoices'));
@@ -141,7 +140,6 @@ const updateCashInvoice = async (id, updates) => {
     }
 
 
-    console.log(`Updates: ${JSON.stringify(updates, null, 2)} | Invoice ID: ${id}`);
 
     if (existingInvoice.products && existingInvoice.products.length > 0) {
 
