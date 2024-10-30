@@ -21,7 +21,12 @@
     "firebase": "^10.14.1",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "pos-system": "file:",
+=======
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
+>>>>>>> 37b21644b5a00738dfa9e9623255d9c4f8280f51
 =======
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
