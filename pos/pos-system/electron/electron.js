@@ -3,6 +3,8 @@ const path = require("path");
 
 const isDev = process.env.NODE_ENV === "development";
 
+
+
 let mainWindow;
 let productMastery;
 let cashInvoice;
