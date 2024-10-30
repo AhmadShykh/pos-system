@@ -9,8 +9,9 @@ const PaymentFields = ({ mode, formData, totalDetails , onPaymentChange }) => {
   useEffect(() => {
     if (totalDetails.total) {
       const updatedTotal = parseFloat(totalDetails.total);
-      setTotalAmount(updatedTotal);
-      console.log("PaymentFields - Received totalAmount:", updatedTotal);
+      const finalTotal = Math.floor(updatedTotal)
+      setTotalAmount(finalTotal);
+      console.log("PaymentFields - Received totalAmount:", finalTotal);
     } else {
       console.log("PaymentFields - formData.total is undefined or zero");
     }

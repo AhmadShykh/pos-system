@@ -614,6 +614,9 @@ export function CashInvoiceForm({
     if (cb) cb();
   };
   const [isModeDelete, setIsModeDelete] = useState(mode === "delete");
+  const roundDownTotal = (value) => {
+    return Math.floor(value);
+  };
 
   return (
     <form
@@ -1080,17 +1083,17 @@ export function CashInvoiceForm({
           />
         </div>
         <div className="flex relative items-center col-span-1">
-          <span className="w-[40%] text-right inline-block">Total:</span>
-          <input
-            type="number"
-            name=""
-            value={totalDetails.total || 0}
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode != "delete" ? "bg-white" : ""
-            }`}
-            disabled
-          />
-        </div>
+      <span className="w-[40%] text-right inline-block">Total:</span>
+      {console.log(totalDetails.total)}
+      <input
+        type="number"
+        value={roundDownTotal(totalDetails.total) || 0}
+        className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+          mode !== "delete" ? "bg-white" : ""
+        }`}
+        disabled
+      />
+    </div>
         {/* Payment Fields */}
       <PaymentFields
           mode={mode}
