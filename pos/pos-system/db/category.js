@@ -199,7 +199,6 @@ const deleteCategoryByName = async (name) => {
   }
 };
 
-
 /**
  * Delete a subcategory by its unique ID within all categories.
  * @param {string} subCategoryId - The unique ID of the subcategory to delete.
@@ -211,6 +210,7 @@ const deleteSubCategoryById = async (subCategoryId) => {
     const snapshot = await get(categoriesRef);
 
     if (snapshot.exists()) {
+      let deletePromises = [];
       let subCategoryFound = false;
 
       // Iterate through each category
@@ -218,29 +218,35 @@ const deleteSubCategoryById = async (subCategoryId) => {
         const categoryId = categorySnapshot.key;
         const subCategoriesRef = ref(database, `categories/${categoryId}/subCategories`);
 
-        // Check for the specific subcategory ID within each category's subcategories
-        get(subCategoriesRef).then((subSnapshot) => {
-          if (subSnapshot.exists()) {
-            subSnapshot.forEach((subChildSnapshot) => {
-              if (subChildSnapshot.key === subCategoryId) {
-                const subCategoryRef = ref(
-                  database,
-                  `categories/${categoryId}/subCategories/${subCategoryId}`
-                );
-                remove(subCategoryRef); // Delete the subcategory by ID
-                subCategoryFound = true;
-                console.log(`Deleted subcategory with ID: "${subCategoryId}" in category ID: "${categoryId}"`);
-              }
-            });
+        // Create a promise for each category's subcategories
+        deletePromises.push(
+          get(subCategoriesRef).then((subSnapshot) => {
+            if (subSnapshot.exists()) {
+              let subChildFound = false;
 
-            // if (!subCategoryFound) {
-            //   console.log(`No subcategory found with ID: "${subCategoryId}" in category ID: "${categoryId}".`);
-            // }
-          } else {
-            console.log(`No subcategories found in category ID: "${categoryId}".`);
-          }
-        });
+              subSnapshot.forEach((subChildSnapshot) => {
+                if (subChildSnapshot.key === subCategoryId) {
+                  const subCategoryRef = ref(database, `categories/${categoryId}/subCategories/${subCategoryId}`);
+                  // Delete the subcategory by ID
+                  remove(subCategoryRef);
+                  subChildFound = true;
+                  subCategoryFound = true;
+                  console.log(`Deleted subcategory with ID: "${subCategoryId}" in category ID: "${categoryId}"`);
+                }
+              });
+
+              if (!subChildFound) {
+                console.log(`No subcategory found with ID: "${subCategoryId}" in category ID: "${categoryId}".`);
+              }
+            } else {
+              console.log(`No subcategories found in category ID: "${categoryId}".`);
+            }
+          })
+        );
       });
+
+      // Wait for all delete operations to complete
+      await Promise.all(deletePromises);
 
       if (!subCategoryFound) {
         console.log(`No subcategory found with ID: "${subCategoryId}" in any category.`);
