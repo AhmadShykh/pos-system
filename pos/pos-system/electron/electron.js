@@ -14,6 +14,7 @@ let addBrand;
 let addSubCategory;
 let addCategory;
 
+
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1550,
@@ -578,4 +579,8 @@ ipcMain.on("openCustomerMastery", () => {
 
 ipcMain.on("openPurchaseInvoice", () => {
   createPurchaseInvoiceWindow();
+});
+
+ipcMain.on("openReturn", () => {
+  createReturnWindow();
 });

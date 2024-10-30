@@ -22,6 +22,7 @@
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "print-js": "^1.6.0",
+    "pos-system": "file:",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.24.1",

@@ -107,6 +107,27 @@ const Bar = () => {
           >
             <img src={Pencil} className="lg:w-4 w-3 nav-ph" />
           </button>
+
+          {/* Return Invoice */}
+          <button
+            className="nav-p flex gap-1 justify-center items-center text-xs font-semibold active:scale-95"
+            onClick={() => {
+              window.electron.ipcRenderer.send("openReturn");
+            }}
+          >
+            <li className="flex w-full h-full">
+              <img src={bubble} className="lg:w-5 mr-1 w-4 nah-h lg:mr-5" />
+              Product Return
+            </li>
+          </button>
+          <button
+            onClick={() => {
+              window.electron.ipcRenderer.send("openReturn");
+            }}
+            className="ml-1 mr-8 nav-p flex gap-1 justify-center items-center text-xs font-semibold active:scale-75 transition-all"
+          >
+            <img src={Pencil} className="lg:w-4 w-3 nav-ph" />
+          </button>
         </ul>
       </div>
     </div>
