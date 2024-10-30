@@ -13,7 +13,19 @@ import AddArea from "./Components/AddArea";
 import AddBrand from "./Components/AddBrand";
 import AddSubCategory from "./Components/AddSubCategory";
 import AddCategory from "./Components/AddCategory";
+<<<<<<< Updated upstream
+=======
+import Return from "./Pages/Return";
+import ProductList from "./Components/ProductList"; // Import ProductList
+import { ipcRenderer } from "electron"; // Import ipcRenderer correctly
+
+
+
+>>>>>>> Stashed changes
 function App() {
+
+  const [invoiceData, setInvoiceData] = useState(null);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -25,8 +37,17 @@ function App() {
 
     window.addEventListener("keydown", handleKeyDown);
 
+
+
+    // Listen for the 'load-invoice-data' event from Electron's main process
+    ipcRenderer.on('load-invoice-data', (event, data) => {
+      setInvoiceData(data);  // Set invoice data when received
+    });
+
+    // Cleanup function to remove listeners
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      ipcRenderer.removeAllListeners("load-invoice-data");
     };
   }, []);
 
@@ -51,6 +72,12 @@ function App() {
           <Route path="/PrintReport" element={<AddCategory />}></Route>
           <Route path="*" element={<Home />} /> {/* Catch-all route */}
         </Routes>
+        {invoiceData ? (
+        <ProductList invoiceData={invoiceData} />
+      ) : (
+        <p>Loading...</p>
+      )}
+
       </div>
     </Router>
   );

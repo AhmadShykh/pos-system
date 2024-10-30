@@ -477,6 +477,75 @@ function createAddCategoryWindow() {
   });
 }
 
+<<<<<<< Updated upstream
+=======
+function createReturnWindow() {
+  // if (invoiceViewer && !invoiceViewer.isDestroyed()) {
+  //   invoiceViewer.focus();
+  //   return;
+  // }
+  invoiceViewer = new BrowserWindow({
+    // parent: mainWindow,
+    modal: true,
+    show: false,
+    // resizable: false,
+    width: 1500,
+    height: 700,
+    minWidth: 1500,
+    minHeight: 700,
+
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      enableRemoteModule: false,
+    },
+  });
+
+  invoiceViewer.loadURL(
+    isDev
+      ? "http://localhost:3000#Return"
+      : `file://${path.join(__dirname, "../dist/index.html#Return")}`
+  );
+
+  invoiceViewer.once("ready-to-show", () => {
+    invoiceViewer.show();
+  });
+
+  invoiceViewer.on("closed", () => {
+    invoiceViewer = null;
+  });
+}
+
+
+function openInvoiceWindow(invoiceData) {
+  const win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      enableRemoteModule: false,
+    },
+  });
+
+  win.loadURL(
+    isDev
+      ? "http://localhost:3000#Print"
+      : `file://${path.join(__dirname, "../dist/index.html#Print")}`
+  );
+
+  // Send invoice data to the renderer process after it loads
+  win.webContents.once('did-finish-load', () => {
+    win.webContents.send('load-invoice-data', invoiceData);
+  });
+}
+
+
+ipcMain.on('open-invoice-window', (event, invoiceData) => {
+  openInvoiceWindow(invoiceData);
+});
+
+>>>>>>> Stashed changes
 app.whenReady().then(() => {
   createMainWindow();
   app.on("activate", function () {
