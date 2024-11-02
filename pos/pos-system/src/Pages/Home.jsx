@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import Bar from "../Components/Bar";
 import ProductDetails from "../Components/ProductDetails";
 import Table from "../Components/Table";
@@ -8,6 +8,8 @@ import { getDeliveryNotesByProductCode } from "../../db/deliveryNote";
 import { getPurchaseInvoicesWithProductDetails } from "../../db/purchaseInvoice";
 import bgImg from "../Assets/example.png";
 import { getProductByCode } from "../../db/products";
+import { useSalesperson } from '../SalesPersonContext';
+import {Context} from "../App";
 
 /**
  * @typedef {import('../../db/products').Product} Product
@@ -59,6 +61,10 @@ const Home = () => {
   const [quotation, setQuotation] = useState([]);
   const [deliveryNote, setDeliveryNote] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
+
+  const { salespersonID, setSalespersonID, salespersonName, setSalespersonName } = useContext(Context);
+
+
   useEffect(() => {
     const fetchData = async () => {
       const invoices = await getCashInvoicesByProductCode(
@@ -137,8 +143,9 @@ const Home = () => {
         type="text"
         id="SalesPersonName"
         className="outline-none border border-gray-700 w-[60%] ml-2 bg-white px-2 font-semibold"
-        value={selectedProduct.salesPerson}
-        disabled
+        value={salespersonName}
+        onChange={(e) => setSalespersonName(e.target.value)}
+        
       />
     </div>
 
@@ -148,11 +155,12 @@ const Home = () => {
         Salesperson ID:{" "}
       </label>
       <input
-        type="text"
+        type="number"
         id="SalesPersonID"
         className="outline-none border border-gray-700 w-[70%] ml-2 bg-white px-2 font-semibold"
-        value={selectedProduct.salesPersonID}
-        disabled
+        value={salespersonID}
+        onChange={(e) => setSalespersonID(e.target.value)}
+        
       />
     </div>
 

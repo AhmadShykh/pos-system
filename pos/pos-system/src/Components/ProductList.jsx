@@ -1,10 +1,13 @@
 // ProductList.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useContext} from "react";
 import { printProductList } from "../../db/print.js"; // Adjust the path as necessary
+import { useSalesperson } from '../SalesPersonContext';
+import {Context} from "../App.jsx"
 
 const ProductList = () => {
   const [invoice, setInvoice] = useState(null);
   const [printFormat, setPrintFormat] = useState("default"); // State for selected print format
+  const { salespersonID, setSalespersonID, salespersonName } = useContext(Context);
 
 
   useEffect(() => {
@@ -76,7 +79,7 @@ const ProductList = () => {
                   <strong>Address:</strong> [Customer Address]
                 </td>
                 <td className="p-2">
-                  <strong>Salesman:</strong> HAMZA
+                  <strong>Salesman:</strong> {salespersonName}
                 </td>
               </tr>
               <tr className="border-b">

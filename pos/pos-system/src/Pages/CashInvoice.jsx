@@ -80,7 +80,7 @@ function CashInvoice({ mode, initialInvoice }) {
     const fetchData = async () => {
       const areas = await getAllAreas();
       setAreas(areas);
-      const customers = await getCustomers();
+      const customers = await getCustomers();   
       setCustomers(customers);
     };
     fetchInvoices();
@@ -105,6 +105,7 @@ function CashInvoice({ mode, initialInvoice }) {
       status: invoice.status?.toLowerCase() || "unpaid",
     };
 
+    
     setSelectedInvoice(normalizedInvoice);
     setEditField(false);
     setIsPaid(normalizedInvoice.status === "paid");
@@ -412,6 +413,8 @@ const initialFormData = {
   docNo1: "",
   sMan: "",
   MDoc: "",
+  cashAmount:0,
+  creditAmount:0,
   payment: "Cash",
   delPlace: "",
   area: "",
@@ -583,6 +586,8 @@ export function CashInvoiceForm({
       sMan: initialInvoice.sMan || initialFormData.sMan,
       MDoc: initialInvoice.MDoc || initialFormData.MDoc,
       payment: initialInvoice.payment || initialFormData.payment,
+      cashAmount: initialInvoice.cashAmount || initialFormData.cashAmount,
+      creditAmount: initialInvoice.creditAmount || initialFormData.creditAmount,
       delPlace: initialInvoice.delPlace || initialFormData.delPlace,
       area: initialInvoice.area || initialFormData.area,
       PONo: initialInvoice.PONo || initialFormData.PONo,

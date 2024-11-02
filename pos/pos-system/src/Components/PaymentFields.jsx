@@ -5,20 +5,42 @@ const PaymentFields = ({ mode, formData, totalDetails , onPaymentChange }) => {
   const [creditAmount, setCreditAmount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(totalDetails.total || 0);
 
+
+  // useEffect(()=>{
+  //   console.log("This is my data");
+  //   console.log(formData);
+  //   setCreditAmount(formData.creditAmount);
+  //   setCashAmount(formData.cashAmount);
+  // },[]);
+
+  // // New useEffect to initialize creditAmount based on formData
+  // useEffect(() => {
+  //   if (formData.creditAmount) {
+  //     const initialCreditAmount = parseFloat(formData.creditAmount);
+  //     setCreditAmount(isNaN(initialCreditAmount) ? 0 : initialCreditAmount);
+  //     setCreditAmount(isNaN(formData.cashAmount) ? 0 : formData.cashAmount);
+  //     console.log(formData);
+  //     console.log(totalDetails);
+  //     console.log("Initialized Credit Amount from formData:", initialCreditAmount);
+  //   }
+  // }, [formData]); // Run this effect whenever formData changes
+
+
   // Effect to set the total amount when formData changes
   useEffect(() => {
-    if (totalDetails.total) {
-      const updatedTotal = parseFloat(totalDetails.total);
+    if (totalDetails.netTotal) {
+      const updatedTotal = parseFloat(totalDetails.netTotal);
       const finalTotal = Math.floor(updatedTotal)
       setTotalAmount(finalTotal);
       console.log("PaymentFields - Received totalAmount:", finalTotal);
     } else {
       console.log("PaymentFields - formData.total is undefined or zero");
     }
-  }, [totalDetails.total]); // Dependency on formData.total
+  }, [totalDetails.netTotal]); // Dependency on formData.total
 
   // Effect to calculate credit amount based on cashAmount and totalAmount
   useEffect(() => {
+    
     if (formData.payment === 'Both' && !isNaN(totalAmount) && !isNaN(cashAmount)) {
       const newCreditAmount = Math.max(totalAmount - cashAmount, 0);
       setCreditAmount(newCreditAmount);
@@ -31,6 +53,8 @@ const PaymentFields = ({ mode, formData, totalDetails , onPaymentChange }) => {
       });
       console.log("Passing to Parent - Cash Amount:", cashAmount, "Credit Amount:", newCreditAmount);
     }
+
+    
   }, [cashAmount, totalAmount, formData.payment]);
 
   // Handle changes to cash amount input

@@ -13,9 +13,17 @@ import AddSubCategory from "./Components/AddSubCategory";
 import AddCategory from "./Components/AddCategory";
 import Return from "./Pages/Return";
 import ProductList  from "./Components/ProductList";
+import { SalespersonProvider } from "./SalesPersonContext";
+
+
+export const Context = React.createContext();
 
 function App() {
   const [invoiceData, setInvoiceData] = useState(null);
+
+  const [salespersonID, setSalespersonID] = useState("");
+  const [salespersonName, setSalespersonName] = useState("");
+
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -38,28 +46,31 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <div className="bg-background">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/ProductMastery" element={<ProductMastery />} />
-          <Route path="/CashInvoice" element={<CashInvoice />} />
-          <Route path="/selectProduct" element={<MachineProductSelector />} />
-          <Route path="/InvoiceViewer" element={<InvoiceViewer />} />
-          <Route path="/Return" element={<Return />} />
-          <Route path="/PurchaseInvoice" element={<PurchaseInvoice />} />
-          <Route path="/CustomerMastery" element={<CustomerMastery />} />
-          <Route path="/AddArea" element={<AddArea />} />
-          <Route path="/AddBrand" element={<AddBrand />} />
-          <Route path="/AddSubCategory" element={<AddSubCategory />} />
-          <Route path="/AddCategory" element={<AddCategory />} />
-          <Route path="/PrintReport" element={<AddCategory />} />
-          <Route path="/Print" element={<ProductList />}/>
-          <Route path="*" element={<Home />} /> {/* Catch-all route */}
-        </Routes>
-        
-      </div>
-    </Router>
+    <Context.Provider value={[salespersonID, setSalespersonID, salespersonName, setSalespersonName]}>
+
+      <Router>
+        <div className="bg-background">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/ProductMastery" element={<ProductMastery />} />
+            <Route path="/CashInvoice" element={<CashInvoice />} />
+            <Route path="/selectProduct" element={<MachineProductSelector />} />
+            <Route path="/InvoiceViewer" element={<InvoiceViewer />} />
+            <Route path="/Return" element={<Return />} />
+            <Route path="/PurchaseInvoice" element={<PurchaseInvoice />} />
+            <Route path="/CustomerMastery" element={<CustomerMastery />} />
+            <Route path="/AddArea" element={<AddArea />} />
+            <Route path="/AddBrand" element={<AddBrand />} />
+            <Route path="/AddSubCategory" element={<AddSubCategory />} />
+            <Route path="/AddCategory" element={<AddCategory />} />
+            <Route path="/PrintReport" element={<AddCategory />} />
+            <Route path="/Print" element={<ProductList />}/>
+            <Route path="*" element={<Home />} /> {/* Catch-all route */}
+          </Routes>
+          
+        </div>
+      </Router>
+    </Context.Provider>
   );
 }
 
