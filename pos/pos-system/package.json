@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "type-check": "vue-tsc --noEmit",
     "postinstall": "electron-builder install-app-deps",
-    "electron:dev": "concurrently -k \"npm run dev\" \"wait-on tcp:3000 && npx electronmon .\"",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on tcp:3000 && npx electronmon .\"",
     "electron:build": "vite build && electron-builder",
     "start": "electron ."
   },

@@ -18,27 +18,28 @@ export const returnProductsFunc = async (returnProducts) => {
   
   
       // Update product quantities
+      console.log(returnProducts);
   
       
       const updates = returnProducts.products.map(async (invoiceProduct) => {
-        if (invoiceProduct.productCode && invoiceProduct.productCode !== "") {
-          
-          const productRef = query(ref(db, 'products'), orderByChild('productCode'), equalTo(invoiceProduct.productCode));
-          
-          const productSnap = await get(productRef);
-          
-          
+        if (invoiceProduct.id && invoiceProduct.id !== "") {
+
+          const productSnap = await get(ref(db, `products/${invoiceProduct.id}`));
+
+
+
           if (productSnap.exists()) {
-            
-            
+
+        console.log(invoiceProduct);
+
             const productData = productSnap.val();
   
             const productId = Object.keys(productData)[0];
             
-            const productQuantity = isNaN(productData[productId].quantity) ? 0 :  parseInt(productData[productId].quantity);
+            const productQuantity = isNaN(productData.quantity) ? 0 :  parseInt(productData.quantity);
             const newQuantity = productQuantity + parseInt(invoiceProduct.quantity);
   
-            await update(ref(db, `products/${productId}`), { quantity: newQuantity });
+            await update(ref(db, `products/${invoiceProduct.id}`), { quantity: newQuantity });
   
           }  
         }

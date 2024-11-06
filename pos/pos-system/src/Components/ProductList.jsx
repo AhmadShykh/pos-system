@@ -12,6 +12,7 @@ const ProductList = () => {
 
   useEffect(() => {
     const loadInvoiceDataListener = (data) => {
+
       setInvoice(data);
     };
 
@@ -79,7 +80,7 @@ const ProductList = () => {
                   <strong>Address:</strong> [Customer Address]
                 </td>
                 <td className="p-2">
-                  <strong>Salesman:</strong> {salespersonName}
+                  <strong>Salesman:</strong> {invoice.sMan}
                 </td>
               </tr>
               <tr className="border-b">

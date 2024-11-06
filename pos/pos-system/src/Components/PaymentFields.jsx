@@ -27,16 +27,7 @@ const PaymentFields = ({ mode, formData, totalDetails , onPaymentChange }) => {
 
 
   // Effect to set the total amount when formData changes
-  useEffect(() => {
-    if (totalDetails.netTotal) {
-      const updatedTotal = parseFloat(totalDetails.netTotal);
-      const finalTotal = Math.floor(updatedTotal)
-      setTotalAmount(finalTotal);
-      console.log("PaymentFields - Received totalAmount:", finalTotal);
-    } else {
-      console.log("PaymentFields - formData.total is undefined or zero");
-    }
-  }, [totalDetails.netTotal]); // Dependency on formData.total
+
 
   // Effect to calculate credit amount based on cashAmount and totalAmount
   useEffect(() => {

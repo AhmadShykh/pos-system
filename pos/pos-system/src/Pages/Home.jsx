@@ -135,34 +135,34 @@ const Home = () => {
     </div>
 
     {/* Salesperson Name */}
-    <div className="w-[25%] flex items-center">
-      <label htmlFor="SalesPersonName" className="text-sm font-semibold">
-        Salesperson Name:{" "}
-      </label>
-      <input
-        type="text"
-        id="SalesPersonName"
-        className="outline-none border border-gray-700 w-[60%] ml-2 bg-white px-2 font-semibold"
-        value={salespersonName}
-        onChange={(e) => setSalespersonName(e.target.value)}
-        
-      />
-    </div>
+    {/*<div className="w-[25%] flex items-center">*/}
+    {/*  <label htmlFor="SalesPersonName" className="text-sm font-semibold">*/}
+    {/*    Salesperson Name:{" "}*/}
+    {/*  </label>*/}
+    {/*  <input*/}
+    {/*    type="text"*/}
+    {/*    id="SalesPersonName"*/}
+    {/*    className="outline-none border border-gray-700 w-[60%] ml-2 bg-white px-2 font-semibold"*/}
+    {/*    value={salespersonName}*/}
+    {/*    onChange={(e) => setSalespersonName(e.target.value)}*/}
+    {/*    */}
+    {/*  />*/}
+    {/*</div>*/}
 
-    {/* Salesperson ID */}
-    <div className="w-[20%] flex items-center">
-      <label htmlFor="SalesPersonID" className="text-sm font-semibold">
-        Salesperson ID:{" "}
-      </label>
-      <input
-        type="number"
-        id="SalesPersonID"
-        className="outline-none border border-gray-700 w-[70%] ml-2 bg-white px-2 font-semibold"
-        value={salespersonID}
-        onChange={(e) => setSalespersonID(e.target.value)}
-        
-      />
-    </div>
+    {/*/!* Salesperson ID *!/*/}
+    {/*<div className="w-[20%] flex items-center">*/}
+    {/*  <label htmlFor="SalesPersonID" className="text-sm font-semibold">*/}
+    {/*    Salesperson ID:{" "}*/}
+    {/*  </label>*/}
+    {/*  <input*/}
+    {/*    type="number"*/}
+    {/*    id="SalesPersonID"*/}
+    {/*    className="outline-none border border-gray-700 w-[70%] ml-2 bg-white px-2 font-semibold"*/}
+    {/*    value={salespersonID}*/}
+    {/*    onChange={(e) => setSalespersonID(e.target.value)}*/}
+    {/*    */}
+    {/*  />*/}
+    {/*</div>*/}
 
     {/* Links */}
     <div className="flex gap-4 items-center">

@@ -97,6 +97,25 @@ function CashInvoice({ mode, initialInvoice }) {
   //   setIsPaid(invoice.status === "paid"); // Check if already paid
   // };
 
+
+
+  // const handleInvoiceSelect = (invoice) => {
+  //   // Normalize the type to lowercase for consistent comparison
+  //   const normalizedInvoice = {
+  //     ...invoice,
+  //     type: invoice.type?.toLowerCase() || null,
+  //     status: invoice.status?.toLowerCase() || "unpaid",
+  //   };
+  //
+  //
+  //   setSelectedInvoice(normalizedInvoice);
+  //   setEditField(false);
+  //   setIsPaid(normalizedInvoice.status === "paid");
+  //
+  //   // Log for debugging
+  //   console.log("Selected Invoice:", normalizedInvoice);
+  // };
+
   const handleInvoiceSelect = (invoice) => {
     // Normalize the type to lowercase for consistent comparison
     const normalizedInvoice = {
@@ -105,7 +124,7 @@ function CashInvoice({ mode, initialInvoice }) {
       status: invoice.status?.toLowerCase() || "unpaid",
     };
 
-    
+
     setSelectedInvoice(normalizedInvoice);
     setEditField(false);
     setIsPaid(normalizedInvoice.status === "paid");
@@ -113,6 +132,7 @@ function CashInvoice({ mode, initialInvoice }) {
     // Log for debugging
     console.log("Selected Invoice:", normalizedInvoice);
   };
+
 
   const handleActionChange = (newAction) => {
     setAction(newAction);
@@ -182,6 +202,9 @@ function CashInvoice({ mode, initialInvoice }) {
 
   const toggleQuotationManagement = () => {
     setShowQuotationTable((prev) => !prev);
+    if(!showQuotationTable){
+      setAction("add");
+    }
   };
   return (
     <div>
@@ -214,37 +237,35 @@ function CashInvoice({ mode, initialInvoice }) {
             onClick={toggleQuotationManagement}
             className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
           >
+
             {showQuotationTable
               ? "Hide Quotation Table"
               : "Show Quotation Table"}
           </button>
         </nav>
 
-        {showQuotationTable ? (
-          <div className="mt-4">
-            <QuotationTable />
-            <QoutationTable2 />
-          </div>
-        ) : (
-          <>
-            {action === "none" && (
-              <CashInvoiceForm
-                mode={"delete"}
-                initialInvoice={{}}
-                areas={areas}
-                customers={customers}
-                cb={fetchInvoices}
-              />
-            )}
 
-            {(action === "edit" || action === "delete") && !selectedInvoice && (
-              <div className="h-[94vh] w-[85%] mx-auto mt-6 flex justify-between">
-                <div className="relative">
-                  Select Invoice: <input type="text" />
-                  <Popup
-                    items={invoices}
-                    onSelect={handleInvoiceSelect}
-                    style={{ top: "top-[3px] left-[92%]" }}
+
+        { (
+            <>
+              {action === "none" && (
+                  <CashInvoiceForm
+                      mode={"delete"}
+                      initialInvoice={{}}
+                      areas={areas}
+                      customers={customers}
+                      cb={fetchInvoices}
+                  />
+              )}
+
+              {(action === "edit" || action === "delete") && !selectedInvoice && (
+                  <div className="h-[94vh] w-[85%] mx-auto mt-6 flex justify-between">
+                    <div className="relative">
+                      Select Invoice: <input type="text"/>
+                      <Popup
+                          items={invoices}
+                          onSelect={handleInvoiceSelect}
+                          style={{top: "top-[3px] left-[92%]" }}
                     columns={[
                       { key: "id", label: "Id" },
                       { key: "accountName", label: "Customer" },
@@ -305,6 +326,7 @@ function CashInvoice({ mode, initialInvoice }) {
                 areas={areas}
                 customers={customers}
                 cb={fetchInvoices}
+                showQuotationTable = {showQuotationTable}
               />
             )}
 
@@ -376,6 +398,8 @@ const sManData = [
     name: "Salesman 4",
   },
 ];
+
+
 const paymentData = [
   {
     name: "Cash",
@@ -450,9 +474,12 @@ export function CashInvoiceForm({
   areas,
   customers,
   cb,
+  showQuotationTable,
 }) {
   const [formData, setFormData] = useState(initialFormData);
   const [invoiceType, setInvoiceType] = useState("Cash");
+  const [extraDiscount, setExtraDiscount] = useState(false);
+
   const [originalInvoiceType, setOriginalInvoiceType] = useState(
     initialInvoice.invoiceType || null
   );
@@ -462,7 +489,24 @@ export function CashInvoiceForm({
     cashAmount: 0,
     creditAmount: 0,
   });
+  const [quotations, setQuotations] = useState([]);
 
+  useEffect(() => {
+    const fetchQuotations = async () => {
+      const data = await getAllQuotations();  // Assuming getAllQuotations is async
+      setQuotations(data);
+    };
+
+    fetchQuotations();
+  }, []);  // Empty dependency array means this will run only once when the component mounts
+
+
+
+  const handleExtraDiscountChange = (value) =>{
+    setExtraDiscount(value);
+    totalDetails.extraDiscount = value;
+    totalDetails.netTotal = (totalDetails.total - totalDetails.disAmount - value).toFixed(3);
+  }
   //payments handling
   const handlePaymentDetailsChange = (details) => {
     setPaymentDetails(details);
@@ -552,8 +596,12 @@ export function CashInvoiceForm({
 
     discount = Number(((disAmount / grossTotal) * 100).toFixed(3));
     total = (grossTotal + vatAmount).toFixed(3);
-    netTotal = (total - disAmount).toFixed(3);
+    netTotal = (total - disAmount - extraDiscount).toFixed(3);
+    console.log("Extra Discount: " + extraDiscount);
+    console.log("netTotatl: " +netTotal);
+
     setTotalDetails({
+      extraDiscount,
       grossTotal,
       discount,
       disAmount,
@@ -628,6 +676,7 @@ export function CashInvoiceForm({
         alert("Delivery Note Created");
       } else {
         await addQuotation({ ...cashInvoice, ...totalDetails, invoiceType });
+        await addQuotation({ ...cashInvoice, ...totalDetails, invoiceType });
         alert("Quotation Created");
       }
     } else if (mode === "edit") {
@@ -685,6 +734,20 @@ export function CashInvoiceForm({
       total: roundDownTotal(totalDetails.total),
     }));
   }, [totalDetails.total]);
+
+
+  const handleInvoiceSelect = (invoice) => {
+    setFormData((formData) => ({
+      ...formData,
+      products: [
+        ...formData.products,  // existing products
+        ...invoice.products               // new products to append
+      ]
+    }));
+
+    initialInvoice.products = formData.products;
+
+  };
 
   return (
     <form
@@ -1075,12 +1138,36 @@ export function CashInvoiceForm({
           )}
         </div>
       </div>
+      { showQuotationTable && (
+          <div className="mt-4">
+            <div className="relative w-[274px]">
+              Select Quotation: <input type="text"/>
+              <Popup
+                  items={quotations}
+                  onSelect={handleInvoiceSelect}
+                  style={{top: "top-[3px] left-[92%]"}}
+                  columns={[
+                    {key: "id", label: "Id"},
+                    {key: "accountName", label: "Customer"},
+                    {key: "DocNo", label: "DocNo"},
+                    {key: "date", label: "Date"},
+                    {key: "total", label: "Total"},
+                  ]}
+                  name={"invoiceList"}
+                  all={true}
+                  className="mt-10"
+              />
+            </div>
+            {/*<QuotationTable/>*/}
+            {/*<QoutationTable2 />*/}
+          </div>
+      )}
       {
         <div>
           <CashInvoiceTable
             formData={formData}
             onDataChange={handleRowChange}
-            Rows={initialInvoice.products}
+            Rows={formData.products}
             mode={mode}
           />
         </div>
@@ -1091,94 +1178,106 @@ export function CashInvoiceForm({
         <div className="flex relative items-center col-span-1">
           <span className="w-[40%] text-right inline-block">Gross Total:</span>
           <input
-            value={totalDetails.grossTotal || 0}
-            // type="number"
-            name="grossTotal"
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode != "delete" ? "bg-white" : ""
-            }`}
-            disabled
+              value={totalDetails.grossTotal || 0}
+              // type="number"
+              name="grossTotal"
+              className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+                  mode != "delete" ? "bg-white" : ""
+              }`}
+              disabled
           />
         </div>
         <div className="flex relative items-center col-span-1">
           <span className="w-[40%] text-right inline-block">Discount%:</span>
           <input
-            type="number"
-            // name="number"
-            value={totalDetails.discount || 0}
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode != "delete" ? "bg-white" : ""
-            }`}
-            disabled
+              type="number"
+              // name="number"
+              value={totalDetails.discount || 0}
+              className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+                  mode != "delete" ? "bg-white" : ""
+              }`}
+              disabled
           />
         </div>
         <div className="flex relative items-center col-span-1">
           <span className="w-[40%] text-right inline-block">Amount:</span>
           <input
-            type="number"
-            name=""
-            value={totalDetails.disAmount || 0}
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode != "delete" ? "bg-white" : ""
-            }`}
-            disabled
+              type="number"
+              name=""
+              value={totalDetails.disAmount || 0}
+              className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+                  mode != "delete" ? "bg-white" : ""
+              }`}
+              disabled
+          />
+        </div>
+        <div className="flex relative items-center col-span-1">
+          <span className="w-[40%] text-right inline-block">Extra Discount:</span>
+          <input
+              type="number"
+              name=""
+              className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+                  mode != "delete" ? "bg-white" : ""
+              }`}
+              onChange={(e) => handleExtraDiscountChange(e.target.value)}
+
           />
         </div>
         <div className="flex relative items-center col-span-1">
           <span className="w-[40%] text-right inline-block">Net Total:</span>
           <input
-            type="number"
-            name=""
-            value={totalDetails.netTotal || 0}
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode != "delete" ? "bg-white" : ""
-            }`}
-            disabled
+              type="number"
+              name=""
+              value={totalDetails.netTotal || 0}
+              className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+                  mode != "delete" ? "bg-white" : ""
+              }`}
+              disabled
           />
         </div>
         <div className="flex relative items-center col-span-1">
           <span className="w-[40%] text-right inline-block">Vat Amount:</span>
           <input
-            type="number"
-            name=""
-            value={totalDetails.vatAmount || 0}
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode != "delete" ? "bg-white" : ""
-            }`}
-            disabled
+              type="number"
+              name=""
+              value={totalDetails.vatAmount || 0}
+              className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+                  mode != "delete" ? "bg-white" : ""
+              }`}
+              disabled
           />
         </div>
         <div className="flex relative items-center col-span-1">
           <span className="w-[40%] text-right inline-block">Total:</span>
           {console.log(totalDetails.total)}
           <input
-            type="number"
-            value={roundDownTotal(totalDetails.total) || 0}
-            className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
-              mode !== "delete" ? "bg-white" : ""
-            }`}
-            disabled
+              type="number"
+              value={roundDownTotal(totalDetails.total) || 0}
+              className={`h-7 px-1 border border-gray-600 w-full ml-1 ${
+                  mode !== "delete" ? "bg-white" : ""
+              }`}
+              disabled
           />
         </div>
         {/* Payment Fields */}
         <PaymentFields
-          mode={mode}
-          formData={formData}
-          totalDetails={totalDetails}
-          onPaymentChange={handlePaymentDetailsChange}
+            mode={mode}
+            formData={formData}
+            totalDetails={totalDetails}
+            onPaymentChange={handlePaymentDetailsChange}
         />
       </div>
 
       {!(mode === "delete" && !Object.keys(initialInvoice).length === 0) && (
-        <div className="flex space-x-2 mt-2">
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className="bg-white px-5 py-1 w-full border border-gray-100"
-          >
-            {mode} Invoice
-          </button>
-        </div>
+          <div className="flex space-x-2 mt-2">
+            <button
+                type="submit"
+                onClick={handleSubmit}
+                className="bg-white px-5 py-1 w-full border border-gray-100"
+            >
+              {mode} Invoice
+            </button>
+          </div>
       )}
     </form>
   );

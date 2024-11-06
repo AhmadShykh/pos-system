@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import CashInvoiceTable from '../Components/CashInvoiceTable';
-import ProductTable from '../Components/ProductTable';
 import {returnProductsFunc} from '../../db/return.js'
 
 const Return = () => {
@@ -50,31 +49,30 @@ const Return = () => {
   const handleReturnInvoice = () => {
     if (window.confirm('Are you sure you want to return this invoice?')) {
       alert('Return successful!');
-      returnProductsFunc(products)
+      returnProductsFunc(products);
       // Backend handling instructions
     }
   };
 
   return (
     <>
-        <ProductTable />
 
     <div className="w-[98%] mx-auto">
       {/* Navigation buttons for Add and Delete actions */}
-      <nav className="flex gap-1">
-        <button
-          onClick={() => handleActionChange('add')}
-          className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
-        >
-          Add
-        </button>
-        <button
-          onClick={() => handleActionChange('delete')}
-          className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"
-        >
-          Delete
-        </button>
-      </nav>
+      {/*<nav className="flex gap-1">*/}
+      {/*  <button*/}
+      {/*    onClick={() => handleActionChange('add')}*/}
+      {/*    className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"*/}
+      {/*  >*/}
+      {/*    Add*/}
+      {/*  </button>*/}
+      {/*  <button*/}
+      {/*    onClick={() => handleActionChange('delete')}*/}
+      {/*    className="bg-gray-100 px-5 py-1 active:scale-95 border border-gray-300 mt-2"*/}
+      {/*  >*/}
+      {/*    Delete*/}
+      {/*  </button>*/}
+      {/*</nav>*/}
 
       {/* Cash Invoice Table with increased height */}
       <div className="mt-4 h-[80vh] overflow-auto border border-gray-200">

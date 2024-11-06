@@ -27,6 +27,7 @@ function CashInvoiceTable({ formData, onDataChange, Rows, mode }) {
       gAmount: 0,
       discount: 0,
       totalVat: 0,
+      id:"",
     };
     const updatedRows = [...rows, newRow];
     setRows(updatedRows);
@@ -77,6 +78,7 @@ function CashInvoiceTable({ formData, onDataChange, Rows, mode }) {
             totalVat: Number(product.vatType),
             productCode: product.productCode,
             gAmount: Number(product.sellingPrice1),
+            id: product.id,
           };
         } else if (
           index !== selectedRowIndex &&
