@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
-import { addBrand, getAllBrands } from "../../db/brands";
+import { addBrand, getAllBrands,deleteBrand } from "../../db/brands";
 
 /**
  * @typedef {import('../../db/brands').Brand} Brand
@@ -44,10 +44,17 @@ const AddBrand = () => {
     setFormData(initialFormData);
     fetchData();
   };
-  const handleDelete = (brandId) => {
-    // Add your delete logic here
-    console.log("Deleting brand with ID: ${brandId}" + brandId);
-    // Example: Call an API or update the state to remove the brand
+ 
+  // Delete handler
+  const handleDelete = async (e, brandId) => {
+    e.preventDefault(); // Prevent default form or button behavior
+    try {
+      await deleteBrand(brandId); // Call the delete function with the brandId
+      await fetchData(); // Re-fetch data to update state after deletion
+      console.log(`Deleting brand with ID: ${brandId}`);
+    } catch (error) {
+      console.error("Error deleting brand:", error);
+    }
   };
 
   return (
@@ -90,7 +97,7 @@ const AddBrand = () => {
                 key: "delete",
                 header: "Delete",
                 render: (row) => (
-                  <button type="button" onClick={() => handleDelete(row.shortForm)}>Delete</button>
+                  <button type="button" onClick={(e) => handleDelete(e,row.shortForm)}>Delete</button>
                 ),
               },
             ]}

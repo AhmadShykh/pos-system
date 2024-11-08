@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
-import { addCategory, getAllCategories } from "../../db/category";
+import { addCategory, getAllCategories,deleteCategoryByName } from "../../db/category";
 
 const initalFormData = {
   name: "",
@@ -47,10 +47,17 @@ const AddCategory = () => {
     if (id) setFormData(initalFormData);
   };
 
-  const handleDelete = (brandId) => {
-    // Add your delete logic here
-    console.log("Deleting brand with ID: ${brandId}" + brandId);
-    // Example: Call an API or update the state to remove the brand
+ 
+  // Delete handler
+  const handleDelete = async (e, categoryName) => {
+    e.preventDefault(); // Prevent default form or button behavior
+    try {
+      await deleteCategoryByName(categoryName) // Call the delete function with the brandId
+      await fetchData(); // Re-fetch data to update state after deletion
+      console.log(`Deleting Category with ID: ${categoryName}`);
+    } catch (error) {
+      console.error("Error deleting Category:", error);
+    }
   };
 
   return (
@@ -93,7 +100,7 @@ const AddCategory = () => {
                 key: "delete",
                 header: "Delete",
                 render: (row) => (
-                  <button type="button" onClick={() => handleDelete(row.shortForm)}>Delete</button>
+                  <button type="button" onClick={(e) => handleDelete(e,row.shortForm)}>Delete</button>
                 ),
               },
             ]}

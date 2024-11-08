@@ -218,7 +218,6 @@ const MachineProductSelector = ({ onProductSelect, productCode }) => {
             className="w-full border p-2 mb-2"
           />
         </div>
-
         {/* Container for the table with fixed height */}
         <div className="overflow-auto" style={{ maxHeight: "50vh" }}>
           <ProductList

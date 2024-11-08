@@ -1,5 +1,5 @@
 import { database } from "../src/firebase"; // Adjust the path according to your setup
-import { ref, set, get, push } from "firebase/database"; // Import necessary Firebase methods
+import { ref, set, get, push,remove  } from "firebase/database"; // Import necessary Firebase methods
 
 /**
  * @typedef {Object} SubCategory
@@ -162,4 +162,103 @@ const getAllSubCategories = async () => {
     throw new Error("Failed to retrieve subcategories");
   }
 };
-export { addCategory, getAllCategories, updateCategory, addSubCategory, updateSubCategory, getAllSubCategories };
+
+
+/**
+ * Delete a category by name.
+ * @param {string} name - The name of the category to delete.
+ * @returns {Promise<void>}
+ */
+const deleteCategoryByName = async (name) => {
+  try {
+    const categoriesRef = ref(database, 'categories');
+    const snapshot = await get(categoriesRef);
+
+    if (snapshot.exists()) {
+      let deleted = false;
+
+      snapshot.forEach((childSnapshot) => {
+        const category = childSnapshot.val();
+        if (category.shortForm === name) {
+          const categoryRef = ref(database, `categories/${childSnapshot.key}`);
+          remove(categoryRef); // Delete the category with the matching name
+          deleted = true;
+          console.log(`Deleted category with name: ${name}`);
+        }
+      });
+
+      if (!deleted) {
+        console.log(`No category found with name: ${name}`);
+      }
+    } else {
+      console.log("No categories found.");
+    }
+  } catch (error) {
+    console.error("Failed to delete category:", error);
+    throw new Error("Failed to delete category");
+  }
+};
+
+/**
+ * Delete a subcategory by its unique ID within all categories.
+ * @param {string} subCategoryId - The unique ID of the subcategory to delete.
+ * @returns {Promise<void>}
+ */
+const deleteSubCategoryById = async (subCategoryId) => {
+  try {
+    const categoriesRef = ref(database, 'categories');
+    const snapshot = await get(categoriesRef);
+
+    if (snapshot.exists()) {
+      let deletePromises = [];
+      let subCategoryFound = false;
+
+      // Iterate through each category
+      snapshot.forEach((categorySnapshot) => {
+        const categoryId = categorySnapshot.key;
+        const subCategoriesRef = ref(database, `categories/${categoryId}/subCategories`);
+
+        // Create a promise for each category's subcategories
+        deletePromises.push(
+          get(subCategoriesRef).then((subSnapshot) => {
+            if (subSnapshot.exists()) {
+              let subChildFound = false;
+
+              subSnapshot.forEach((subChildSnapshot) => {
+                if (subChildSnapshot.key === subCategoryId) {
+                  const subCategoryRef = ref(database, `categories/${categoryId}/subCategories/${subCategoryId}`);
+                  // Delete the subcategory by ID
+                  remove(subCategoryRef);
+                  subChildFound = true;
+                  subCategoryFound = true;
+                  console.log(`Deleted subcategory with ID: "${subCategoryId}" in category ID: "${categoryId}"`);
+                }
+              });
+
+              if (!subChildFound) {
+                console.log(`No subcategory found with ID: "${subCategoryId}" in category ID: "${categoryId}".`);
+              }
+            } else {
+              console.log(`No subcategories found in category ID: "${categoryId}".`);
+            }
+          })
+        );
+      });
+
+      // Wait for all delete operations to complete
+      await Promise.all(deletePromises);
+
+      if (!subCategoryFound) {
+        console.log(`No subcategory found with ID: "${subCategoryId}" in any category.`);
+      }
+    } else {
+      console.log("No categories found.");
+    }
+  } catch (error) {
+    console.error("Failed to delete subcategory:", error);
+    throw new Error("Failed to delete subcategory");
+  }
+};
+
+
+export { addCategory, getAllCategories, updateCategory, addSubCategory,deleteSubCategoryById, updateSubCategory,deleteCategoryByName, getAllSubCategories };

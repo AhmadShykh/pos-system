@@ -15,7 +15,6 @@ const Popup = ({ items, onSelect, style, columns, all, ICON, name }) => {
   const handleValueSelect = (e, item) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log(item);
     onSelect(!all ? item.shortForm || item.name || item.Name : item);
     
     setIsModalOpen(false);

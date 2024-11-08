@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import Popup from "./Popup";
-import { getAllCategories, addSubCategory, getAllSubCategories } from "../../db/category"; // Import necessary functions
+import { getAllCategories, addSubCategory,deleteSubCategoryById, getAllSubCategories } from "../../db/category"; // Import necessary functions
 
 /**
  * @typedef {import('../../db/category').Category} Category
@@ -58,6 +58,7 @@ const AddCategory = () => {
     const newSubCategory = {
       name: formData.name,
       shortForm: formData.shortForm,
+      id: selectedCategory.id,
     };
 
     // Add the new subcategory to the database
@@ -70,10 +71,16 @@ const AddCategory = () => {
     setFormData(initialFormData);
   };
 
-  const handleDelete = (brandId) => {
-    // Add your delete logic here
-    console.log("Deleting brand with ID: ${brandId}" + brandId);
-    // Example: Call an API or update the state to remove the brand
+  // Delete handler
+  const handleDelete = async (e,subCategoryName) => {
+    e.preventDefault(); // Prevent default form or button behavior
+    try {
+      //console.log(subCategoryName);
+      await deleteSubCategoryById(subCategoryName); // Call the delete function with the brandId
+      await fetchSubCategories(); // Re-fetch data to update state after deletion
+    } catch (error) {
+      console.error("Error subcategory brand:", error);
+    }
   };
 
   return (
@@ -134,11 +141,12 @@ const AddCategory = () => {
             columns={[
               { key: "shortForm", header: "SubCategory Id" },
               { key: "name", header: "SubCategory Name" },
+              { key: "id", header: "SubCategory Unique Key" },
               {
                 key: "delete",
                 header: "Delete",
                 render: (row) => (
-                  <button type="button" onClick={() => handleDelete(row.shortForm)}>Delete</button>
+                  <button type="button" onClick={(e) => handleDelete(e,row.id)}>Delete</button>
                 ),
               },
             ]}

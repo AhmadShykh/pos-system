@@ -3,6 +3,8 @@ const path = require("path");
 
 const isDev = process.env.NODE_ENV === "development";
 
+
+
 let mainWindow;
 let productMastery;
 let cashInvoice;
@@ -13,6 +15,7 @@ let addArea;
 let addBrand;
 let addSubCategory;
 let addCategory;
+
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
@@ -28,7 +31,10 @@ function createMainWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
+
   });
 
   mainWindow.webContents.setWindowOpenHandler((edata) => {
@@ -174,6 +180,8 @@ function createProductMasteryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -211,6 +219,8 @@ function createCashInvoiceWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
   cashInvoice.loadURL(
@@ -246,6 +256,8 @@ function createInvoiceViewerWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -282,6 +294,8 @@ function createPurchaseInvoiceWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -318,6 +332,8 @@ function createCustomerMasteryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -353,6 +369,8 @@ function createAddBrandWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -388,6 +406,8 @@ function createAddAreaWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -423,6 +443,8 @@ function createaddSubCategoryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -459,6 +481,8 @@ function createAddCategoryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -476,6 +500,81 @@ function createAddCategoryWindow() {
     addCategory = null;
   });
 }
+
+function createReturnWindow() {
+  // if (invoiceViewer && !invoiceViewer.isDestroyed()) {
+  //   invoiceViewer.focus();
+  //   return;
+  // }
+  invoiceViewer = new BrowserWindow({
+    // parent: mainWindow,
+    modal: true,
+    show: false,
+    // resizable: false,
+    width: 1500,
+    height: 700,
+    minWidth: 1500,
+    minHeight: 700,
+
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
+    },
+  });
+
+  invoiceViewer.loadURL(
+    isDev
+      ? "http://localhost:3000#Return"
+      : `file://${path.join(__dirname, "../dist/index.html#Return")}`
+  );
+
+  invoiceViewer.once("ready-to-show", () => {
+    invoiceViewer.show();
+  });
+
+  invoiceViewer.on("closed", () => {
+    invoiceViewer = null;
+  });
+}
+
+
+function openInvoiceWindow(invoiceData) {
+  const win = new BrowserWindow({
+    width: 1500,
+    height: 700,
+    minWidth: 1500,
+    minHeight: 700,
+    resizable: true, // Prevent resizing
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
+
+    },
+  });
+
+  win.loadURL(
+    isDev
+      ? "http://localhost:3000#Print"
+      : `file://${path.join(__dirname, "../dist/index.html#Print")}`
+  );
+
+  // Send invoice data to the renderer process after it loads
+  win.webContents.once('did-finish-load', () => {
+    console.log(invoiceData);
+    win.webContents.send('load-invoice-data', invoiceData);
+  });
+}
+
+
+ipcMain.on('open-invoice-window', (event, invoiceData) => {
+  openInvoiceWindow( invoiceData);
+});
 
 app.whenReady().then(() => {
   createMainWindow();
@@ -512,4 +611,8 @@ ipcMain.on("openCustomerMastery", () => {
 
 ipcMain.on("openPurchaseInvoice", () => {
   createPurchaseInvoiceWindow();
+});
+
+ipcMain.on("openReturn", () => {
+  createReturnWindow();
 });

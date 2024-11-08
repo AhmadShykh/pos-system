@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "type-check": "vue-tsc --noEmit",
     "postinstall": "electron-builder install-app-deps",
-    "electron:dev": "concurrently -k \"npm run dev\" \"wait-on tcp:3000 && npx electronmon .\"",
+    "electron:dev": "concurrently -k \"vite\" \"wait-on tcp:3000 && npx electronmon .\"",
     "electron:build": "vite build && electron-builder",
     "start": "electron ."
   },
@@ -19,10 +19,12 @@
     "cross-env": "^7.0.3",
     "dexie": "^4.0.8",
     "firebase": "^10.14.1",
+    "print-js": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.24.1",
     "react-table": "^7.8.0",
+    "react-to-print": "^3.0.2",
     "uuid": "^10.0.0",
     "wait-on": "^7.2.0"
   },
@@ -32,7 +34,7 @@
     "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.19",
     "electron": "^31.2.0",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^25.1.8",
     "electronmon": "^2.0.3",
     "eslint": "^8.53.0",
     "eslint-plugin-react": "^7.33.2",
@@ -53,11 +55,18 @@
     },
     "files": [
       "dist/**/*",
-      "electron/**/*"
+      "electron/**/*",
+      "public/**/*"
     ],
     "directories": {
       "buildResources": "assets",
       "output": "POS-System"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "./public",
+        "to": "assets"
+      }
+    ]
   }
 }

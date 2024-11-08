@@ -81,7 +81,6 @@ const addDeliveryNote = async (deliveryNote) => {
           
           
           const productData = productSnap.val();
-          console.log(productData);
 
           const productId = Object.keys(productData)[0];
           
@@ -114,7 +113,6 @@ const addDeliveryNote = async (deliveryNote) => {
 const updateDeliveryNote = async (id, updates) => {
   try {
 
-    console.log(id);
     const deliveryNoteRef = ref(db, `deliveryNotes/${id}`);
     const existingInvoiceSnap = await get(deliveryNoteRef);
 

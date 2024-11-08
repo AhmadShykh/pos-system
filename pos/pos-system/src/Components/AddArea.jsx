@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
-import { addArea, getAllAreas } from "../../db/area";
+import { addArea, getAllAreas, deleteArea } from "../../db/area";
 
 import { ref, set } from "firebase/database"; // Importing necessary methods
 import { database } from "../firebase"; // Import your initialized Firebase database instance
@@ -56,10 +56,16 @@ const AddArea = () => {
     await fetchData();
   };
 
-  const handleDelete = (brandId) => {
-    // Add your delete logic here
-    console.log("Deleting brand with ID: ${brandId}" + brandId);
-    // Example: Call an API or update the state to remove the brand
+  // Delete handler
+  const handleDelete = async (e, brandId) => {
+    e.preventDefault(); // Prevent default form or button behavior
+    try {
+      await deleteArea(brandId); // Call the delete function with the brandId
+      await fetchData(); // Re-fetch data to update state after deletion
+      console.log(`Deleting brand with ID: ${brandId}`);
+    } catch (error) {
+      console.error("Error deleting brand:", error);
+    }
   };
 
   return (
@@ -102,7 +108,7 @@ const AddArea = () => {
                 key: "delete",
                 header: "Delete",
                 render: (row) => (
-                  <button type="button" onClick={() => handleDelete(row.shortForm)}>Delete</button>
+                  <button type="button" onClick={(e) => handleDelete(e,row.shortForm)}>Delete</button>
                 ),
               },
             ]}
