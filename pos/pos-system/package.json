@@ -19,11 +19,7 @@
     "cross-env": "^7.0.3",
     "dexie": "^4.0.8",
     "firebase": "^10.14.1",
-    "jspdf": "^2.5.2",
-    "jspdf-autotable": "^3.8.4",
-    "pos-system": "file:",
     "print-js": "^1.6.0",
-
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.24.1",
@@ -38,7 +34,7 @@
     "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.19",
     "electron": "^31.2.0",
-    "electron-builder": "^23.6.0",
+    "electron-builder": "^25.1.8",
     "electronmon": "^2.0.3",
     "eslint": "^8.53.0",
     "eslint-plugin-react": "^7.33.2",
@@ -58,8 +54,9 @@
       "icon": "assets/icon.ico"
     },
     "files": [
-      "dist//*",
-      "electron//*"
+      "dist/**/*",
+      "electron/**/*",
+      "public/**/*"
     ],
     "directories": {
       "buildResources": "assets",
@@ -70,6 +67,6 @@
         "from": "./public",
         "to": "assets"
       }
-    ] 
+    ]
   }
 }

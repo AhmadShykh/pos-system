@@ -31,7 +31,10 @@ function createMainWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
+
   });
 
   mainWindow.webContents.setWindowOpenHandler((edata) => {
@@ -177,6 +180,8 @@ function createProductMasteryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -214,6 +219,8 @@ function createCashInvoiceWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
   cashInvoice.loadURL(
@@ -249,6 +256,8 @@ function createInvoiceViewerWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -285,6 +294,8 @@ function createPurchaseInvoiceWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -321,6 +332,8 @@ function createCustomerMasteryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -356,6 +369,8 @@ function createAddBrandWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -391,6 +406,8 @@ function createAddAreaWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -426,6 +443,8 @@ function createaddSubCategoryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -462,6 +481,8 @@ function createAddCategoryWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -499,6 +520,8 @@ function createReturnWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
     },
   });
 
@@ -529,6 +552,9 @@ function openInvoiceWindow(invoiceData) {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       enableRemoteModule: false,
+      webSecurity: false,  // Disables CORS policy checks for local resources
+
+
     },
   });
 
